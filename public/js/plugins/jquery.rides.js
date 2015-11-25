@@ -298,7 +298,7 @@
                 
             },
             data: d,
-            url: rides.url,
+            url: rides.urls.get,
             type: 'get'
         }, instance);    
                 
@@ -539,34 +539,82 @@
         var ride_name = $('<input type="text" id="'+instance.id+'-ride_name" name="'+instance.id+'-ride_name" class="required">');
         var ride_description = $('<input type="text" id="'+instance.id+'-ride_description" name="'+instance.id+'-ride_description" class="required">');
         var ride_owner = $('<select id="'+instance.id+'-ride_owner" name="'+instance.id+'-ride_owner" class="">');
-        var ride_group = $('<select id="'+instance.id+'-ride_group" name="'+instance.id+'-ride_group" class="">');
-        var ride_location = $('<select id="'+instance.id+'-ride_location" name="'+instance.id+'-ride_location" class="">');
-        var ride_address = $('<select id="'+instance.id+'-ride_address" name="'+instance.id+'-ride_address" class="">');
-        var ride_date = $('<input type="text" id="'+instance.id+'-ride_date" name="'+instance.id+'-ride_date" class="" style="padding-left:10px;">');
-        var ride_time = $('<select id="'+instance.id+'-ride_time" name="'+instance.id+'-ride_time" class="">');
+        var ride_group = $('<select id="'+instance.id+'-ride_group" name="'+instance.id+'-ride_group" class="large">');
+        var ride_location = $('<select id="'+instance.id+'-ride_location" name="'+instance.id+'-ride_location" class="large">');
+        var ride_address = $('<select id="'+instance.id+'-ride_address" name="'+instance.id+'-ride_address" class="large">');
+        var ride_date = $('<input type="text" id="'+instance.id+'-ride_date" name="'+instance.id+'-ride_date" class="required fdate" style="padding-left:10px;width:100px;" readonly="true">');
+        var ride_time = $('<select id="'+instance.id+'-ride_time" name="'+instance.id+'-ride_time" class="small">');
         var ride_status = $('<select id="'+instance.id+'-ride_status" name="'+instance.id+'-ride_status" class="">');
-        var ride_join = $('<select id="'+instance.id+'-ride_join" name="'+instance.id+'-ride_join" class="">');
-        var ride_tempo = $('<select id="'+instance.id+'-ride_tempo" name="'+instance.id+'-ride_tempo" class="">');
-        var ride_drop = $('<select id="'+instance.id+'-ride_drop" name="'+instance.id+'-ride_drop" class="">');
+        var ride_join = $('<select id="'+instance.id+'-ride_join" name="'+instance.id+'-ride_join" class="small">');
+        var ride_tempo = $('<select id="'+instance.id+'-ride_tempo" name="'+instance.id+'-ride_tempo" class="small">');
+        var ride_drop = $('<select id="'+instance.id+'-ride_drop" name="'+instance.id+'-ride_drop" class="small">');
         var ride_states = $('<select id="'+instance.id+'-ride_states" name="'+instance.id+'-ride_states" class="">');
-        var ride_public = $('<select id="'+instance.id+'-ride_public" name="'+instance.id+'-ride_public" class="">');
+        var ride_public = $('<select id="'+instance.id+'-ride_public" name="'+instance.id+'-ride_public" class="small">');
         
-        var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
+        var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">').button({
             icons: {
                 primary: 'ui-icon-check'
             },
             text: true,
-            label: 'Update'                                            
+            label: 'Save'                                            
         }).click(function(e){
             e.preventDefault();
+            
+            $.validator.addMethod('fdate', function(date, element) {
+                var date_regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/ ;
+                return this.optional(element) || date.match(date_regex);
+            }, 'Please enter a date mm/dd/yyyy');
+            
             $('#'+instance.id+'-add-ride-form').validate({
+                debug: true,
+                errorPlacement: function(error, element) {
+                    return true;
+                },
+                ignore: '',
+                submitHandler: function(f) {
+                    
+                    var ride = {
+                        name: $('#'+instance.id+'-ride_name').val(),
+                        description: $('#'+instance.id+'-ride_description').val(),
+                        owner: $('#'+instance.id+'-ride_owner').val(),
+                        group: $('#'+instance.id+'-ride_group').val(),
+                        location: $('#'+instance.id+'-ride_location').val(),
+                        address: $('#'+instance.id+'-ride_address').val(),
+                        date: $('#'+instance.id+'-ride_date').val(),
+                        time: $('#'+instance.id+'-ride_time').val(),
+                        status: $('#'+instance.id+'-ride_status').val(),
+                        join: $('#'+instance.id+'-ride_join').val(),
+                        tempo: $('#'+instance.id+'-ride_tempo').val(),
+                        drop: $('#'+instance.id+'-ride_drop').val(),
+                        states: $('#'+instance.id+'-ride_states').val(),
+                        public: $('#'+instance.id+'-ride_public').val()                        
+                    };
+                    
+                    var post = $.extend(ride, instance.options.data, {action: 'add'});
+                    server({
+                        callback: function(data, instance) {
+                            
+                        },
+                        data: post,
+                        url: Models.rides().urls.post,
+                        type: 'post'
+                    }, instance);
+                    
+                    
+                },
+                success: function() {
+                    
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }                
             });
             
             $('#'+instance.id+'-add-ride-form').submit();
             
         });
         
-        var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">Cancel</button>').button({
+        var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">').button({
             icons: {
                 primary: 'ui-icon-close'
             },
@@ -581,23 +629,62 @@
         var row = $('<tr>');
         var a1 = $('<td rowspan="8" valign="middle">').append($('<div class="ride-add-ad alley">'));
         var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
-        var c2 = $('<td>').append(ride_name);
-        var c3 = $('<td>').append($('<div class="label-02">').append('Date:'));
-        var c4 = $('<td>').append(ride_date);
+        var c2 = $('<td colspan="5">').append(ride_name);
         var a2 = $('<td rowspan="8" valign="middle">').append($('<div class="ride-add-ad alley">'));
-        row.append(a1).append(c1).append(c2).append(c3).append(c4).append(a2);
+        row.append(a1).append(c1).append(c2).append(a2);
         table.append(row);
         
         // row 2
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
-        c2 = $('<td>').append(ride_description);
-        c3 = $('<td>').append($('<div class="label-02">').append('Time:'));
-        c4 = $('<td>').append(ride_time)
-        row.append(c1).append(c2).append(c3).append(c4);               
+        c2 = $('<td colspan="5">').append(ride_description);
+        row.append(c1).append(c2);               
         table.append(row);
         
         // row 3
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Group:'));
+        c2 = $('<td colspan="5">').append(ride_group);
+        row.append(c1).append(c2);
+        table.append(row);
+
+        // row 4
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Location:'));
+        c2 = $('<td colspan="5">').append(ride_location);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 5
+        row = $('<tr>');
+        c1 = $('<td>').append($('<span class="label-02">').append('Address:'));
+        c2 = $('<td colspan="5">').append(ride_address);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 6
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Date:'));
+        c2 = $('<td>').append(ride_date);
+        var c3 = $('<td>').append($('<div class="label-02">').append('Time:'));
+        var c4 = $('<td>').append(ride_time);
+        var c5 = $('<td>').append($('<span class="label-02">').append('Public:'));
+        var c6 = $('<td>').append(ride_public);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        table.append(row);                
+        
+        // row 7
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Allow Join:'));
+        c2 = $('<td>').append(ride_join);
+        c3 = $('<td>').append($('<div class="label-02">').append('Tempo:'));
+        c4 = $('<td>').append(ride_tempo);
+        c5 = $('<td>').append($('<span class="label-02">').append('Drop:'));
+        c6 = $('<td>').append(ride_drop);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        table.append(row);
+
+        /*
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Owner:'));
         c2 = $('<td>').append(ride_owner);
@@ -605,46 +692,16 @@
         c4 = $('<td>').append(ride_status);
         row.append(c1).append(c2).append(c3).append(c4);                       
         table.append(row);
-        
-        // row 4
-        row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Group:'));
-        c2 = $('<td>').append(ride_group);
-        c3 = $('<td>').append($('<div class="label-02">').append('Join:'));
-        c4 = $('<td>').append(ride_join);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-        
-        // row 5
-        row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Location:'));
-        c2 = $('<td>').append(ride_location);
-        c3 = $('<td>').append($('<div class="label-02">').append('Tempo:'));
-        c4 = $('<td>').append(ride_tempo);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-                
-        // row 6
-        row = $('<tr>');
-        c1 = $('<td>').append($('<span class="label-02">').append('Address:'));
-        c2 = $('<td>').append(ride_address);
-        c3 = $('<td>').append($('<span class="label-02">').append('Drop:'));
-        c4 = $('<td>').append(ride_drop);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-        
-        // row 7
         row = $('<tr>');
         c1 = $('<td>').append($('<span class="label-02">').append('State:'));
         c2 = $('<td>').append(ride_states);
-        c3 = $('<td>').append($('<span class="label-02">').append('Public:'));
-        c4 = $('<td>').append(ride_public);
         row.append(c1).append(c2).append(c3).append(c4);                       
         table.append(row);  
-        
+        */
+                                
         // row 8
         row = $('<tr>');
-        c1 = $('<td colspan="4" align="center">').append(update).append(cancel);
+        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
         row.append(c1);
         table.append(row);        
         
@@ -664,12 +721,6 @@
                     changeMonth: true,
                     changeYear: true,
                     dateFormat: 'mm/dd/yy'
-                    /*
-                    showOn: 'button',
-                    buttonImage: '/images/common/calendar-icon.png',
-                    buttonImageOnly: true,
-                    buttonText: 'Select Date'
-                    */
                 });  
                         
         // selects
@@ -754,23 +805,16 @@
         var div = $('<div>');
         var form = $('<form id="'+instance.id+'-edit-user-info-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');
                 
-        var table = $('<table class="ride-management rides add" width="100%" align="center">');
+        var table = $('<table class="ride-management user" width="100%" align="center">');
         
-        var ride_name = $('<input type="text" id="'+instance.id+'-ride_name" name="'+instance.id+'-ride_name" class="">');
-        var ride_description = $('<input type="text" id="'+instance.id+'-ride_description" name="'+instance.id+'-ride_description" class="">');
-        var ride_owner = $('<select id="'+instance.id+'-ride_owner" name="'+instance.id+'-ride_owner" class="">');
-        var ride_group = $('<select id="'+instance.id+'-ride_group" name="'+instance.id+'-ride_group" class="">');
-        var ride_location = $('<select id="'+instance.id+'-ride_location" name="'+instance.id+'-ride_location" class="">');
-        var ride_address = $('<select id="'+instance.id+'-ride_address" name="'+instance.id+'-ride_address" class="">');
-        var ride_date = $('<input type="text" id="'+instance.id+'-ride_date" name="'+instance.id+'-ride_date" class="" style="padding-left:10px;">');
-        var ride_time = $('<select id="'+instance.id+'-ride_time" name="'+instance.id+'-ride_time" class="">');
-        var ride_status = $('<select id="'+instance.id+'-ride_status" name="'+instance.id+'-ride_status" class="">');
-        var ride_join = $('<select id="'+instance.id+'-ride_join" name="'+instance.id+'-ride_join" class="">');
-        var ride_tempo = $('<select id="'+instance.id+'-ride_tempo" name="'+instance.id+'-ride_tempo" class="">');
-        var ride_drop = $('<select id="'+instance.id+'-ride_drop" name="'+instance.id+'-ride_drop" class="">');
-        var ride_states = $('<select id="'+instance.id+'-ride_states" name="'+instance.id+'-ride_states" class="">');
-        var ride_public = $('<select id="'+instance.id+'-ride_public" name="'+instance.id+'-ride_public" class="">');
+        var user_first_name = $('<input type="text" id="'+instance.id+'-user_first_name" name="'+instance.id+'-user_first_name" class="required">');
+        var user_last_name = $('<input type="text" id="'+instance.id+'-user_last_name" name="'+instance.id+'-user_last_name" class="required">');
+        var user_email = $('<input type="text" id="'+instance.id+'-user_email" name="'+instance.id+'-user_email" class="required email">');
         
+        var user_skill = $('<select id="'+instance.id+'-user_skill" name="'+instance.id+'-user_skill" class="small">');
+        var user_experience = $('<select id="'+instance.id+'-user_experience" name="'+instance.id+'-user_experience" class="small">');
+        var user_style = $('<select id="'+instance.id+'-user_style" name="'+instance.id+'-user_style" class="small" style="width:112px;">');
+                
         var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
             icons: {
                 primary: 'ui-icon-check'
@@ -779,6 +823,46 @@
             label: 'Update'                                            
         }).click(function(e){
             e.preventDefault();
+            
+            $('#'+instance.id+'-edit-user-info-form').validate({
+                debug: true,
+                errorPlacement: function(error, element) {
+                    return true;
+                },
+                ignore: '',
+                submitHandler: function(f) {
+                    
+                    var user = {
+                        first_name: $('#'+instance.id+'-user_first_name').val(),
+                        last_name: $('#'+instance.id+'-user_last_name').val(),
+                        email: $('#'+instance.id+'-user_email').val(),
+                        skill: $('#'+instance.id+'-user_skill').val(),
+                        experience: $('#'+instance.id+'-user_experience').val(),
+                        style: $('#'+instance.id+'-user_style').val()                        
+                    };
+                    
+                    var post = $.extend(user, instance.options.data, {action: 'add'});
+                    server({
+                        callback: function(data, instance) {
+                            
+                        },
+                        data: post,
+                        url: Models.users().urls.post,
+                        type: 'post'
+                    }, instance);
+                    
+                    
+                },
+                success: function() {
+                    
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }                
+            });
+            
+            $('#'+instance.id+'-edit-user-info-form').submit();
+            
         });
         
         var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">Cancel</button>').button({
@@ -794,72 +878,41 @@
         
         // row 1
         var row = $('<tr>');
-        var a1 = $('<td rowspan="8" valign="middle">').append($('<div class="user-edit-ad alley">'));
-        var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
-        var c2 = $('<td>').append(ride_name);
-        var c3 = $('<td>').append($('<div class="label-02">').append('Date:'));
-        var c4 = $('<td>').append(ride_date);
-        var a2 = $('<td rowspan="8" valign="middle">').append($('<div class="user-edit-ad alley">'));
-        row.append(a1).append(c1).append(c2).append(c3).append(c4).append(a2);
+        var a1 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        var c1 = $('<td>').append($('<div class="label-02">').append('First Name:'));
+        var c2 = $('<td colspan="5">').append(user_first_name);
+        var a2 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        row.append(a1).append(c1).append(c2).append(a2);
         table.append(row);
         
         // row 2
         row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
-        c2 = $('<td>').append(ride_description);
-        c3 = $('<td>').append($('<div class="label-02">').append('Time:'));
-        c4 = $('<td>').append(ride_time)
-        row.append(c1).append(c2).append(c3).append(c4);               
+        c1 = $('<td>').append($('<div class="label-02">').append('Last Name:'));
+        c2 = $('<td colspan="5">').append(user_last_name);
+        row.append(c1).append(c2);
         table.append(row);
         
         // row 3
         row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Owner:'));
-        c2 = $('<td>').append(ride_owner);
-        c3 = $('<td>').append($('<div class="label-02">').append('Status:'));
-        c4 = $('<td>').append(ride_status);
-        row.append(c1).append(c2).append(c3).append(c4);                       
+        c1 = $('<td>').append($('<div class="label-02">').append('Email:'));
+        c2 = $('<td colspan="5">').append(user_email);
+        row.append(c1).append(c2);
         table.append(row);
         
-        // row 4
+        // row 3
         row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Group:'));
-        c2 = $('<td>').append(ride_group);
-        c3 = $('<td>').append($('<div class="label-02">').append('Join:'));
-        c4 = $('<td>').append(ride_join);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-        
-        // row 5
-        row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Location:'));
-        c2 = $('<td>').append(ride_location);
-        c3 = $('<td>').append($('<div class="label-02">').append('Tempo:'));
-        c4 = $('<td>').append(ride_tempo);
-        row.append(c1).append(c2).append(c3).append(c4);                       
+        c1 = $('<td>').append($('<div class="label-02">').append('Skill:'));
+        c2 = $('<td>').append(user_skill);
+        var c3 = $('<td>').append($('<div class="label-02">').append('Experience:'));
+        var c4 = $('<td>').append(user_experience);
+        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
+        var c6 = $('<td>').append(user_style);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
         table.append(row);
                 
-        // row 6
+        // row 4
         row = $('<tr>');
-        c1 = $('<td>').append($('<span class="label-02">').append('Address:'));
-        c2 = $('<td>').append(ride_address);
-        c3 = $('<td>').append($('<span class="label-02">').append('Drop:'));
-        c4 = $('<td>').append(ride_drop);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-        
-        // row 7
-        row = $('<tr>');
-        c1 = $('<td>').append($('<span class="label-02">').append('State:'));
-        c2 = $('<td>').append(ride_states);
-        c3 = $('<td>').append($('<span class="label-02">').append('Public:'));
-        c4 = $('<td>').append(ride_public);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);  
-        
-        // row 8
-        row = $('<tr>');
-        c1 = $('<td colspan="4" align="center">').append(update).append(cancel);
+        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
         row.append(c1);
         table.append(row);        
         
@@ -874,84 +927,22 @@
         ad = $('<div class="user-edit-ad bottom">');
         form.append(ad);
         
-        // add date picker to date
-        ride_date.datepicker({
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: 'mm/dd/yy'
-        });  
-                        
         // selects
-        $.each(getOptions(instance, data.selects.groups), function(index, option){
-            ride_group.append(option);
+        $.each(getOptions(instance, data.selects.skills), function(index, option){
+            user_skill.append(option);
         });
         
-        $.each(getOptions(instance, data.selects.locations), function(index, option){
-            ride_location.append(option);
+        $.each(experienceOptions(instance), function(index, option){
+            user_experience.append(option);
         });
         
-        $.each(getOptions(instance, data.selects.addresses), function(index, option){
-            ride_address.append(option);
+        $.each(getOptions(instance, data.selects.styles), function(index, option){
+            user_style.append(option);
         });
         
-        $.each(timeOptions(instance), function(index, option){            
-            ride_time.append(option);
-        });
-        
-        $.each(getOptions(instance, data.selects.status), function(index, option){
-            ride_status.append(option);
-        });
-
-        $.each(getOptions(instance, data.selects.joinable), function(index, option){
-            ride_join.append(option);
-        });
-        
-        $.each(getOptions(instance, data.selects.tempo), function(index, option){
-            ride_tempo.append(option);
-        });
-        
-        $.each(getOptions(instance, data.selects.drop), function(index, option){
-            ride_drop.append(option);
-        });
-        
-        $.each(getOptions(instance, data.selects.public), function(index, option){
-            ride_public.append(option);
-        });
-        
-        $.each(getOptions(instance, data.selects.states), function(index, option){
-            ride_states.append(option);
-        });
-        
-        ride_owner.selectmenu();
-        ride_group.selectmenu();
-        ride_location.selectmenu({
-            change: function() {
-                
-                var id = $(this).val();
-
-                server({
-                    callback: function(data, instance){
-                        log(instance, 'addRideForm', 'get addresses by location id', data);
-                        ride_address.find('option').remove();
-                        ride_address.selectmenu('destroy').selectmenu({ style: 'dropdown' });
-                        $.each(getOptions(instance, data.selects.addresses), function(index, option){
-                            ride_address.append(option).selectmenu("refresh", true);
-                        });                    
-                    },
-                    url: Models.addresses().urls.get + id,
-                    type: 'get'
-                }, instance);            
-                
-            }
-        });
-        ride_address.selectmenu();
-        ride_time.selectmenu();
-        ride_status.selectmenu();
-        ride_join.selectmenu();
-        ride_tempo.selectmenu();
-        ride_drop.selectmenu();
-        ride_public.selectmenu();
-        ride_states.selectmenu();
+        user_skill.selectmenu();
+        user_experience.selectmenu();
+        user_style.selectmenu();
        
         div.append(form);
         
@@ -972,6 +963,20 @@
         }
                 
         return options;
+        
+    }
+    
+    function experienceOptions(instance) {
+        
+        var options = [];
+        
+        for (var i=0; i < 50; i++) {
+            var option = $('<option>', { value: i}).text(i + ' year(s)');
+            options.push(option);
+        }
+                
+        return options;
+        
         
     }
     
@@ -1066,7 +1071,7 @@
                                         }
                                     },
                                     data: post,
-                                    url: model.url,
+                                    url: model.urls.get,
                                     type: 'post'
                                 }, instance);
                                 

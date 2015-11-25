@@ -136,7 +136,10 @@ var Models = function(){
             }
         ],
         name: 'users',
-        url: 'rides/users'        
+        urls: {
+            get: 'rides/users',
+            post: 'users/save'
+        }
     };
     
     var rides = {
@@ -155,7 +158,10 @@ var Models = function(){
             }   
         ],
         name: 'rides',
-        url: 'rides/rides'
+        urls: {
+            get: 'rides/rides',
+            post: 'rides/save'
+        }
     };
     
     var locations = {

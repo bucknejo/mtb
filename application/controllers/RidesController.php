@@ -69,6 +69,14 @@ class RidesController extends Zend_Controller_Action {
         $public = explode('|', $config->codes->public);
         $selects["public"] = $public;
         
+        // skills
+        $skills = explode('|', $config->codes->skills);
+        $selects["skills"] = $skills;
+        
+        // styles
+        $styles = explode('|', $config->codes->styles);
+        $selects["styles"] = $styles;
+        
         // groups
         $query = "select concat(id, ':', name) as 'option' ";
         $query .= "from groups ";
@@ -195,56 +203,6 @@ class RidesController extends Zend_Controller_Action {
         
     }
     
-    public function usersAction() {
-        
-        $mapper = new Application_Model_TableMapper();
-        $table_name = "users";
-        $id = $this->_getParam("id");
-        $process = $this->_getParam("process");
-        $oper = $this->_getParam("oper");
-        
-        switch ($process) {
-            case "GET-ONE":
-                $data = $mapper->getItemById($table_name, $id);
-                break;
-            case "POST":
-                //$date_created = $this->_getParam("date_created");
-                //$last_updated = $this->_getParam("last_updated");
-                //$active = $this->_getParam("active");
-                $user_name_internal = $this->_getParam("user_name_internal");
-                $user_name_external = $this->_getParam("user_name_external");
-                $first_name = $this->_getParam("first_name");
-                $last_name = $this->_getParam("last_name");
-                $password = $this->_getParam("password");
-                $role_id = $this->_getParam("role_id");
-                $email = $this->_getParam("email");
-                $data = array(
-                    "user_name_internal" => $user_name_internal,
-                    "user_name_external" => $user_name_external,
-                    "first_name" => $first_name,
-                    "last_name" => $last_name,
-                    "password" => $password,
-                    "role_id" => $role_id,
-                    "email" => $email                    
-                );
-                
-                if ($oper == "UPDATE") {
-                    $i = $mapper->updateItem($table_name, $data, $id);
-                    if ($i > 0) {
-                        $data = $mapper->getItemById($table_name, $id);
-                    }
-                }
-                break;
-            default:
-                $data = array();
-                break;
-        }
-                       
-        $this->view->data = json_encode($data);
-        $this->view->layout()->disableLayout();
-        
-    }
-    
     public function addressesAction() {
         
         $data = array();
@@ -264,6 +222,66 @@ class RidesController extends Zend_Controller_Action {
         $data["selects"] = $selects;        
         $this->view->data = json_encode($data);
         $this->view->layout()->disableLayout();
+        
+    }
+    
+    public function saveAction() {
+        
+        $mapper = new Application_Model_TableMapper();
+                
+        $id = $this->_getParam("id", 0);
+        $action = $this->_getParam("action", "");
+        
+        $date_created = date('Y-m-d');
+        $last_updated = date('Y-m-d');
+        $active = 1;
+                
+        $name = $this->_getParam("name", "");
+        $description = $this->_getParam("description", "");
+        $owner = $this->_getParam("owner", "");
+        $group = $this->_getParam("group", "");
+        $location = $this->_getParam("location", "");
+        $address = $this->_getParam("address", "");
+        $date = $this->_getParam("date", "");
+        $time = $this->_getParam("time", "");
+        $status = $this->_getParam("status", "");
+        $join = $this->_getParam("join", "");
+        $tempo = $this->_getParam("tempo", "");
+        $drop = $this->_getParam("drop", "");
+        $public = $this->_getParam("public", "");
+        
+        $post = array(
+            'date_created' => $date_created,
+            'last_updated' => $last_updated,
+            'active' => $active,
+            'name' => $name,
+            'description' => $description,
+            'owner' => $owner,
+            'group' => $group,
+            'location' => $location,
+            'address' => $address,
+            'date' => $date,
+            'time' => $time,
+            'status' => $status,
+            'join' => $join,
+            'tempo' => $tempo,
+            'drop' => $drop,
+            'public' => $public
+        );
+                        
+        if ($this->getRequest()->isPost()) {
+            
+            if ($action == "add") {
+                $table_name = "rides";
+                $i = $mapper->insertItem($table_name, $post);
+                $id = $mapper->getLastInsertId($table_name);
+                $data = $mapper->getItemById($table_name, $id);
+            }
+            
+        }
+        
+        $this->view->data = json_encode($data);
+        $this->view->layout()->disableLayout();        
         
     }
     

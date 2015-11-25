@@ -96,7 +96,7 @@ html, body {
 .span_side {
     border: 0px solid red;
     color: red;
-    width: 150px;
+    width: 130px;
 }
 
 div.side {
@@ -125,9 +125,13 @@ div.side {
     width: 100%;
 }
 
+.error {color: #990000;}
+input.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+
 /*  GO FULL WIDTH AT LESS THAN 480 PIXELS */
 
 @media only screen and (max-width: 480px) {
 	.col { margin: 1% 0 1% 0%;}
 	.span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
 }
+

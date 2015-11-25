@@ -14,6 +14,9 @@ table.ride-management.user tr td {border: 0px solid #333;padding: 2px 2px;}
 table.ride-management.user tr span.label {color: #333; font-weight: bold; padding-right: 3px;}
 table.ride-management.user tr td span.content-green {color: green; padding-right: 3px;}
 table.ride-management.user tr td span.content-red {color: red; padding-right: 3px;}
+table.ride-management.user input[type="text"] {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.user select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.user select.large {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 
 table.ride-management.rides {border: 1px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides tr {border: 1px solid #333;}
@@ -22,8 +25,9 @@ table.ride-management.rides tr td {border: 1px solid #333;padding: 5px 5px;}
 table.ride-management.rides.add {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides.add tr {border: 0px solid #333;}
 table.ride-management.rides.add tr td {border: 0px solid #333;padding: 5px 5px;}
-table.ride-management.rides.add input[type="text"] {border: 1px solid #333; font-size: 14px; width: 200px; height: 25px; font-family: 'Lato', Arial;}
-table.ride-management.rides.add select {border: 1px solid #333; font-size: 14px; width: 200px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.rides.add input[type="text"] {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.rides.add select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.rides.add select.large {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
 
 
 table.ride-management.rides.detail {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
@@ -79,7 +83,7 @@ div.ui-datepicker {font-size: 11px;}
 .ride-add-ad.bottom {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/sram-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
 .ride-add-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/sram-logo-medium.jpg'); background-position: center; background-repeat: no-repeat;}
 
-.ride-add-button {font-size: 10px !important;}
+.ride-add-button {font-size: 10px !important; width: 75px;}
 .ride-add-button span.green {color: green !important; font-size:11px !important; margin-left: 3px;}
 .ride-add-button span.red {color: red !important; font-size:11px !important; margin-left: 3px;}
 
