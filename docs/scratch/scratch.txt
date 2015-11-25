@@ -1,0 +1,18 @@
+        // add date picker to date
+        ride_date.datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'mm/dd/yy'
+                    /*
+                    showOn: 'button',
+                    buttonImage: '/images/common/calendar-icon.png',
+                    buttonImageOnly: true,
+                    buttonText: 'Select Date'
+                    */
+                });  
+
+
+
+https://github.com/bucknejo/mtb.git
+
+this is a test
