@@ -81,7 +81,8 @@ div.ui-datepicker {font-size: 11px;}
 .ride-add-ad {}
 .ride-add-ad.top {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/sram-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
 .ride-add-ad.bottom {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/sram-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
-.ride-add-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/sram-logo-medium.jpg'); background-position: center; background-repeat: no-repeat;}
+/*.ride-add-ad.alley {width: 150px; height: 150px; margin: 0px; border: 1px solid red; background-image: url('/images/ads/sram-logo-medium.jpg'); background-position: center; background-repeat: no-repeat;}*/
+.ride-add-ad.alley {width: 150px; height: 150px; margin: 0px; border: 1px solid red; }
 
 .ride-add-button {font-size: 10px !important; width: 75px;}
 .ride-add-button span.green {color: green !important; font-size:11px !important; margin-left: 3px;}
@@ -90,5 +91,6 @@ div.ui-datepicker {font-size: 11px;}
 .user-edit-ad {}
 .user-edit-ad.top {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
 .user-edit-ad.bottom {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
-.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: no-repeat;}
+/*.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: no-repeat;}*/
+.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 1px solid blue;}
 

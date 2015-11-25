@@ -137,7 +137,7 @@ var Models = function(){
         ],
         name: 'users',
         urls: {
-            get: 'rides/users',
+            get: 'users/users',
             post: 'users/save'
         }
     };

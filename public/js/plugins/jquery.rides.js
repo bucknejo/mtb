@@ -946,8 +946,86 @@
        
         div.append(form);
         
+        // friends management
+        div.append(friendManagement(instance, data));
+        
+        // groups
+        
         return div;
-    }       
+    }
+    
+    function friendManagement(instance, data) {
+        
+        var div = $('<div style="border:1px solid #333; width:100%;">');
+        
+        var fmfind = $('<div id="friend-management-find" style="width:100%;height:100px;border:1px solid blue;">');
+        var fmlist = $('<div id="friend-management-list">');
+        var fmhead = $('<div id="friend-management-header">');
+        
+        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+            $('#friend-management-find').remove();            
+        });
+        
+        var add = $('<button style="font-size:11px;">').button({
+            icons: {
+                primary: 'ui-icon-plus'
+            },
+            text: true,
+            label: 'Find Friends'
+        }).click(function(e){
+            e.preventDefault();
+            
+            if ($('#friend-management-find').length > 0) {
+                $('#friend-management-find').remove();
+            } else {
+                fmhead.after(fmfind);
+            }
+            
+            /*
+            if ($('#edit-user-info').length > 0) {
+                $('#edit-user-info').remove();
+                uit.after(edituserinfo);
+            } else {
+                uit.after(edituserinfo);
+            }
+            */
+            
+            
+        });
+                
+        fmfind.append(close);
+        fmfind.append($('<div style="clear:both;>'));
+        
+        fmhead.append($('<span>').append('Friends')).append(add);
+        
+        if (isArray(data.friends)) {
+            
+            var table = $('<table class="" width="100%">');
+            var tr = $('<tr>');
+            
+            for (var i=0; i < data.friends.length; i++) {
+                var friend = data.friends[i];
+                tr = $('<tr>');
+                tr.append($('<td>').append(friend.first_name));
+                tr.append($('<td>').append(friend.last_name));
+                tr.append($('<td>').append(friend.email));
+                tr.append($('<td>').append(friend.skill));
+                tr.append($('<td>').append(friend.experience));
+                tr.append($('<td>').append(friend.type));
+                tr.append($('<td>').append(friend.guide));
+                table.append(tr);
+            }
+            
+        }
+        
+        fmlist.append(table);
+                        
+        div.append(fmhead);
+        div.append(fmlist);
+                        
+        return div;
+        
+    }
     
     function timeOptions(instance) {
         
