@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+        <?php
+        
+            $config = Zend_Registry::get('config');
+            $description = $config->site->description;
+            
+        ?>
+        
+        <?php echo $this->headTitle();?>
+        <meta name="description" content="<?php echo $description;?>">   
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+                
+        <!-- shortcut icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/logo/rs-icon.gif" />
+
+        <!-- css files -->
+        <link href="/css/site.css" rel="stylesheet" type="text/css" />    
+        <link href="/css/rides.css" rel="stylesheet" type="text/css" />   
+        <link href="/js/jquery-ui-1.11.4.custom/jquery-ui.min.css" rel="stylesheet" type="text/css" />    
+        
+        <!-- js files -->
+        <script src="/js/jquery-ui-1.11.4.custom/external/jquery/jquery.js"></script>
+        <script src="/js/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+        
+        <!-- js files -->
+        <script src="/js/site/jquery.mtb.js"></script>        
+        <script src="/js/plugins/jquery.rides.js"></script>        
+        <script src="/js/plugins/jquery.rides.models.js"></script>        
+        <script src="/js/plugins/jquery.mtb.ads.js"></script>    
+        
+        <!-- js validation -->
+        <script src="/js/jquery-validation/dist/jquery.validate.js"></script>        
+        <script src="/js/jquery-validation/dist/additional-methods.js"></script>        
+        
+        
+    </head>
+    <body>
+        <div>
+            <div style="height:75px;"><?php include('top.phtml');?></div>
+            <div><?php echo $this->layout()->content;?></div>
+            <div><?php include('bottom.phtml');?></div>
+        </div>
+    </body>    
+</html>
+

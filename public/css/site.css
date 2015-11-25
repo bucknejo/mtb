@@ -1,0 +1,133 @@
+
+/************************************
+* 
+* aqua: #336699
+* gray: #999999
+* char: #666666
+* red : #900000
+* ash : #c3c3c3
+* blk : #333333
+* gree: #00a000
+*
+* dc01: #465a9b
+* dc02: #6493ed
+
+
+* rs01: #465a9b
+* rs02: #527de8
+* rs03: #666666
+* rs04: #798489
+*
+*************************************/
+
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700);
+@font-face {
+	font-family: 'fontawesome';
+	src:url('/moab/resources/fonts/fontawesome.eot');
+	src:url('/moab/resources/fonts/fontawesome.eot?#iefix') format('embedded-opentype'),
+		url('/moab/resources/fonts/fontawesome.svg#fontawesome') format('svg'),
+		url('/moab/resources/fonts/fontawesome.woff') format('woff'),
+		url('/moab/resources/fonts/fontawesome.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+body {
+    font-family: 'Lato', Calibri, Arial, sans-serif;
+    color: #333;    
+}
+*, *:after, *:before { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+body, html { font-size: 100%; padding: 0; margin: 0;}
+
+/* bottom */
+a.bottom  {color:#999;text-decoration: none;}
+a.bottom:link {text-decoration: none;}
+a.bottom:hover {color:#465a9b;text-decoration:none;}
+
+/* home */
+
+/* Set all parents to full height */
+html, body { 
+    height: 100%;
+}
+
+
+/*  SECTIONS  */
+.section {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+}
+
+/*  COLUMN SETUP  */
+.col {
+	display: block;
+	float:left;
+	margin: 1% 0 1% .5%;
+        border: 0px solid #333;
+}
+.col:first-child { margin-left: 0; }
+
+
+/*  GROUPING  */
+.group:before,
+.group:after {
+	content:"";
+	display:table;
+}
+.group:after {
+	clear:both;
+}
+.group {
+    zoom:1; /* For IE 6/7 */
+}
+
+/*  GRID OF THREE  */
+.span_3_of_3 {
+	width: 100%;
+}
+.span_2_of_3 {
+	width: 66.1%;
+}
+.span_1_of_3 {
+	width: 32.2%;
+}
+
+.span_side {
+    border: 0px solid red;
+    color: red;
+    width: 150px;
+}
+
+div.side {
+    border: 1px solid red;
+    color: red;
+    width: 150px;
+    height: 100%;
+}
+
+.span_center {
+    border: 0px solid red;
+    width: 75%;
+}
+
+.span_middle {
+    width: 25%;
+    border: 1px solid red;
+}
+
+.column-side {
+    border:0px solid red;
+    width: 100px;
+}
+
+.column-center {
+    width: 100%;
+}
+
+/*  GO FULL WIDTH AT LESS THAN 480 PIXELS */
+
+@media only screen and (max-width: 480px) {
+	.col { margin: 1% 0 1% 0%;}
+	.span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
+}
