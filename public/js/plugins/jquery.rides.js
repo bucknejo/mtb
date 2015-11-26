@@ -474,7 +474,7 @@
                         $('#' + 'sub-row-' + data.id).remove();
                     } else {
                         
-                        var r = $('<tr id="sub-row-'+data.id+'">');
+                        var r = $('<tr id="sub-row-'+data.id+'" style="background-color: #fff !important;">');
                         var c = $('<td colspan="9">');
 
                         r.append(c.append(subride(instance, data, true)));
@@ -956,52 +956,54 @@
     
     function friendManagement(instance, data) {
         
-        var div = $('<div style="border:1px solid #333; width:100%;">');
+        var div = $('<div style="border:0px solid #333; width:100%;">');
         
-        var fmfind = $('<div id="friend-management-find" style="width:100%;height:100px;border:1px solid blue;">');
+        var fmfind = $('<div id="friend-management-find" style="width:100%;height:100px;border:1px dotted blue; margin-bottom:3px;display:none;">');
         var fmlist = $('<div id="friend-management-list">');
-        var fmhead = $('<div id="friend-management-header">');
+        var fmhead = $('<div id="friend-management-header" style="margin-top:10px;">');
         
         var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
-            $('#friend-management-find').remove();            
+            $('#friend-management-find').hide();
         });
         
-        var add = $('<button style="font-size:11px;">').button({
+        var add = $('<button style="font-size:9px;float:right;">').button({
             icons: {
                 primary: 'ui-icon-plus'
             },
             text: true,
-            label: 'Find Friends'
+            label: 'Add Friends'
         }).click(function(e){
             e.preventDefault();
             
+            /*
             if ($('#friend-management-find').length > 0) {
                 $('#friend-management-find').remove();
             } else {
                 fmhead.after(fmfind);
             }
-            
-            /*
-            if ($('#edit-user-info').length > 0) {
-                $('#edit-user-info').remove();
-                uit.after(edituserinfo);
-            } else {
-                uit.after(edituserinfo);
-            }
             */
-            
-            
+           $('#friend-management-find').show();
+           
         });
                 
         fmfind.append(close);
         fmfind.append($('<div style="clear:both;>'));
         
-        fmhead.append($('<span>').append('Friends')).append(add);
-        
+        fmhead.append($('<span class="ride-management-segment-header">').append('Friends')).append(add);
+        fmhead.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin:10px 0px;" />'));
+                        
         if (isArray(data.friends)) {
             
-            var table = $('<table class="" width="100%">');
-            var tr = $('<tr>');
+            var table = $('<table class="ride-management friends" width="100%">');
+            var tr = $('<tr class="table-header">');
+            tr.append($('<td>').append($('<span class="">').append('First Name')));
+            tr.append($('<td>').append($('<span class="">').append('Last Name')));
+            tr.append($('<td>').append($('<span class="">').append('Email')));
+            tr.append($('<td>').append($('<span class="">').append('Skill')));
+            tr.append($('<td>').append($('<span class="">').append('Experience')));
+            tr.append($('<td>').append($('<span class="">').append('Style')));
+            tr.append($('<td>').append($('<span class="">').append('Guide')));
+            table.append(tr);
             
             for (var i=0; i < data.friends.length; i++) {
                 var friend = data.friends[i];
@@ -1021,6 +1023,7 @@
         fmlist.append(table);
                         
         div.append(fmhead);
+        div.append(fmfind);
         div.append(fmlist);
                         
         return div;

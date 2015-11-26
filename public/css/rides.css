@@ -18,20 +18,32 @@ table.ride-management.user input[type="text"] {border: 1px solid #333; font-size
 table.ride-management.user select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.user select.large {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 
+table.ride-management.friends {border: 1px solid #333; border-collapse: collapse; font-size: 10px;}
+table.ride-management.friends tr {border: 1px solid #333;}
+table.ride-management.friends tr.table-header {background: #465a9b !important; color: #fff;}
+table.ride-management.friends tr:nth-child(even) {background: #ccc;}
+table.ride-management.friends tr:nth-child(odd) {background: #fff;}
+table.ride-management.friends tr td {border: 1px solid #333;padding: 2px 2px;}
+
 table.ride-management.rides {border: 1px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides tr {border: 1px solid #333;}
+table.ride-management.rides tr:nth-child(even) {background: #ccc;}
+table.ride-management.rides tr:nth-child(odd) {background: #fff;}
 table.ride-management.rides tr td {border: 1px solid #333;padding: 5px 5px;}
 
 table.ride-management.rides.add {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides.add tr {border: 0px solid #333;}
+table.ride-management.rides.add tr:nth-child(even) {background: #fff;}
+table.ride-management.rides.add tr:nth-child(odd) {background: #fff;}
 table.ride-management.rides.add tr td {border: 0px solid #333;padding: 5px 5px;}
 table.ride-management.rides.add input[type="text"] {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.rides.add select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.rides.add select.large {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
 
-
 table.ride-management.rides.detail {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides.detail tr {border: 0px solid #333;}
+table.ride-management.rides.detail tr:nth-child(even) {background: #fff;}
+table.ride-management.rides.detail tr:nth-child(odd) {background: #fff;}
 table.ride-management.rides.detail tr td {border: 0px solid #333;padding: 5px 5px;}
 table.ride-management.rides.detail tr span.label {color: #333; font-weight: bold; padding-right: 3px;}
 table.ride-management.rides.detail tr span.content-green {color: green; padding-right: 3px;}
@@ -43,6 +55,8 @@ table.ride-management.rides.detail.group tr.table-header {background: #465a9b !i
 table.ride-management.rides.detail.group tr:nth-child(even) {background: #ccc;}
 table.ride-management.rides.detail.group tr:nth-child(odd) {background: #fff;}
 table.ride-management.rides.detail.group tr td {border: 1px solid #333;padding: 2px 2px;}
+
+.ride-management-segment-header {font-weight: bold; font-size: 12px; margin: 3px;}
 
 .circle {
     width: 10px;
@@ -89,8 +103,12 @@ div.ui-datepicker {font-size: 11px;}
 .ride-add-button span.red {color: red !important; font-size:11px !important; margin-left: 3px;}
 
 .user-edit-ad {}
+/*
 .user-edit-ad.top {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
 .user-edit-ad.bottom {width: 100%; margin: 0px; border: 0px solid blue; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: repeat-x; height: 25px; }
-/*.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: no-repeat;}*/
-.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 1px solid blue;}
+.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 0px solid orange; background-image: url('/images/ads/shimano-logo-small.jpg'); background-position: center; background-repeat: no-repeat;}
+*/
+.user-edit-ad.top {width: 100%; margin: 0px; border: 1px dotted blue;  height: 25px; }
+.user-edit-ad.bottom {width: 100%; margin: 0px; border: 1px dotted blue;  height: 25px; }
+.user-edit-ad.alley {width: 150px; height: 150px; margin: 0px; border: 1px dotted blue;}
 
