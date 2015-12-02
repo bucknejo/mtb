@@ -53,7 +53,13 @@ class RidesController extends Zend_Controller_Action {
         $query .= "from users  ";
         $query .= "where id not in (select friend_id from friends where user_id = $user_id);";
         $data["available"] = $mapper->getCustomSelect($query);
-                
+        
+        // user groups
+        $query = "select * ";
+        $query .= "from groups ";
+        $query .= "where owner = $user_id;";
+        $data["usergroups"] = $mapper->getCustomSelect($query);
+
         // rides
         $query = "select a.*, ";
         $query .= "(select concat_ws(', ', last_name, first_name) from users where id = a.owner) as 'owner_name', ";
@@ -98,6 +104,14 @@ class RidesController extends Zend_Controller_Action {
         $styles = explode('|', $config->codes->styles);
         $selects["styles"] = $styles;
         
+        // ride types
+        $ridetypes = explode('|', $config->codes->rides->types);
+        $selects["ridetypes"] = $ridetypes;
+        
+        // locked
+        $locked = explode('|', $config->codes->rides->locked);
+        $selects["locked"] = $locked;
+        
         // groups
         $query = "select concat(id, ':', name) as 'option' ";
         $query .= "from groups ";
@@ -118,6 +132,13 @@ class RidesController extends Zend_Controller_Action {
         $query .= "where a.location_id = 2;";
         $addresses = $mapper->getCustomSelect($query);        
         $selects["addresses"] = $this->_helper->utilities->arrayitize($addresses);
+        
+        // deputies
+        $query = "select concat(id, ':', last_name, ', ', first_name) as 'option' ";
+        $query .= "from users ";
+        $query .= "where id in (select friend_id from friends where user_id = $user_id);";
+        $deputies = $mapper->getCustomSelect($query);        
+        $selects["deputies"] = $this->_helper->utilities->arrayitize($deputies);
                         
         $data["selects"] = $selects;
                 

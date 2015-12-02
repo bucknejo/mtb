@@ -16,3 +16,161 @@
 https://github.com/bucknejo/mtb.git
 
 this is a test
+
+strava
+avarts
+
+
+                tr.click(function(){
+
+                    var data = $(this).data('data');
+                    
+                    if ($('#' + 'sub-row-' + data.id).length > 0) {
+                        $('#' + 'sub-row-' + data.id).remove();
+                    } else {
+                        
+                        var r = $('<tr id="sub-row-'+data.id+'" style="background-color: #fff !important;">');
+                        var c = $('<td colspan="9">');
+
+                        r.append(c.append(subride(instance, data, true)));
+
+                        $(this).closest('tr').after(r);
+                        
+                    }                                        
+                    
+                }).data('data', rides[i]);
+
+
+        var form = $('<form id="'+instance.id+'-edit-user-info-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');
+                
+        var table = $('<table class="ride-management user" width="100%" align="center">');
+        
+        var user_first_name = $('<input type="text" id="'+instance.id+'-user_first_name" name="'+instance.id+'-user_first_name" class="required">');
+        var user_last_name = $('<input type="text" id="'+instance.id+'-user_last_name" name="'+instance.id+'-user_last_name" class="required">');
+        var user_email = $('<input type="text" id="'+instance.id+'-user_email" name="'+instance.id+'-user_email" class="required email">');
+        
+        var user_skill = $('<select id="'+instance.id+'-user_skill" name="'+instance.id+'-user_skill" class="small">');
+        var user_experience = $('<select id="'+instance.id+'-user_experience" name="'+instance.id+'-user_experience" class="small">');
+        var user_style = $('<select id="'+instance.id+'-user_style" name="'+instance.id+'-user_style" class="small" style="width:112px;">');
+                
+        var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
+            icons: {
+                primary: 'ui-icon-check'
+            },
+            text: true,
+            label: 'Update'                                            
+        }).click(function(e){
+            e.preventDefault();
+            
+            $('#'+instance.id+'-edit-user-info-form').validate({
+                debug: true,
+                errorPlacement: function(error, element) {
+                    return true;
+                },
+                ignore: '',
+                submitHandler: function(f) {
+                    
+                    var user = {
+                        first_name: $('#'+instance.id+'-user_first_name').val(),
+                        last_name: $('#'+instance.id+'-user_last_name').val(),
+                        email: $('#'+instance.id+'-user_email').val(),
+                        skill: $('#'+instance.id+'-user_skill').val(),
+                        experience: $('#'+instance.id+'-user_experience').val(),
+                        style: $('#'+instance.id+'-user_style').val()                        
+                    };
+                    
+                    var post = $.extend(user, instance.options.data, {action: 'add'});
+                    server({
+                        callback: function(data, instance) {
+                            
+                        },
+                        data: post,
+                        url: Models.users().urls.post,
+                        type: 'post'
+                    }, instance);
+                    
+                    
+                },
+                success: function() {
+                    
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }                
+            });
+            
+            $('#'+instance.id+'-edit-user-info-form').submit();
+            
+        });
+        
+        var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">Cancel</button>').button({
+            icons: {
+                primary: 'ui-icon-close'
+            },
+            text: true,
+            label: 'Cancel'                                            
+        }).click(function(e){
+            e.preventDefault();
+            $('#edit-user-info').remove();
+        });                
+        
+        // row 1
+        var row = $('<tr>');
+        var a1 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        var c1 = $('<td>').append($('<div class="label-02">').append('First Name:'));
+        var c2 = $('<td colspan="5">').append(user_first_name);
+        var a2 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        row.append(a1).append(c1).append(c2).append(a2);
+        table.append(row);
+        
+        // row 2
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Last Name:'));
+        c2 = $('<td colspan="5">').append(user_last_name);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 3
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Email:'));
+        c2 = $('<td colspan="5">').append(user_email);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 3
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Skill:'));
+        c2 = $('<td>').append(user_skill);
+        var c3 = $('<td>').append($('<div class="label-02">').append('Experience:'));
+        var c4 = $('<td>').append(user_experience);
+        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
+        var c6 = $('<td>').append(user_style);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        table.append(row);
+                
+        // row 4
+        row = $('<tr>');
+        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+        row.append(c1);
+        table.append(row);        
+        
+        // add ad div to form top
+        var ad = $('<div class="user-edit-ad top">');
+        form.append(ad);
+        
+        // add middle components to form
+        form.append(table);                  
+        
+        // add ad div to form bottom
+        ad = $('<div class="user-edit-ad bottom">');
+        form.append(ad);
+        
+        // selects
+        $.each(getOptions(instance, data.selects.skills), function(index, option){
+            user_skill.append(option);
+        });
+        
+        $.each(experienceOptions(instance), function(index, option){
+            user_experience.append(option);
+        });
+        

@@ -178,6 +178,13 @@ var Models = function(){
         }        
     };
     
+    var groups = {
+        name: 'groups',
+        urls: {
+            post: 'groups/save'
+        }
+    }
+    
 
     function getUsers() {
         return users;
@@ -195,11 +202,16 @@ var Models = function(){
         return addresses;
     }
     
+    function getGroups() {
+        
+    }
+    
     return {
         users: getUsers,
         rides: getRides,
         locations: getLocations,
-        addresses: getAddresses
+        addresses: getAddresses,
+        groups: getGroups
     };
     
 }();

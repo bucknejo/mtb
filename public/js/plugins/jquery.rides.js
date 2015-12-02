@@ -92,6 +92,34 @@
         
     }
     
+    function subfriend(instance, data) {
+        
+        var div = $('<div style="width:100%;">');        
+        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+            $('#' + 'friend-sub-row-' + data.id).remove();            
+        });
+        
+        div.append(close);
+        div.append($('<div style="clear:both;>'));
+        
+        return div;
+        
+    }
+    
+    function subgroup(instance, data) {
+        
+        var div = $('<div style="width:100%;">');        
+        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+            $('#' + 'group-sub-row-' + data.id).remove();            
+        });
+        
+        div.append(close);
+        div.append($('<div style="clear:both;>'));
+        
+        return div;
+        
+    }
+    
     function subride(instance, data, edit) {
                                         
         var div = $('<div style="width:100%;">');        
@@ -803,6 +831,16 @@
     function editUserInfoForm(instance, data) {
         
         var div = $('<div>');
+        
+        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;border:0px dotted green;" class="clickable base">').append('&#10799;').click(function(){
+            $('#edit-user-info').remove();
+        });
+        
+        div.append(close);
+        
+        div.append($('<div class="ride-management-segment-header" style="clear:both;">').append('Profile'));
+        div.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin-top:10px;" />'));
+                
         var form = $('<form id="'+instance.id+'-edit-user-info-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');
                 
         var table = $('<table class="ride-management user" width="100%" align="center">');
@@ -950,53 +988,38 @@
         div.append(friendManagement(instance, data));
         
         // groups
-        
+        div.append(groupManagement(instance, data));
+                
         return div;
+        
     }
     
     function friendManagement(instance, data) {
         
         var div = $('<div style="border:0px solid #333; width:100%;">');
         
-        var fmfind = $('<div id="friend-management-find" style="width:100%;border:0px dotted blue; margin-bottom:3px;display:none;">');
+        var fmfind = $('<div id="friend-management-find" style="border:0px dotted blue; margin-bottom:3px; display:none; padding: 5px;">');
         var fmlist = $('<div id="friend-management-list">');
         var fmhead = $('<div id="friend-management-header" style="margin-top:10px;">');
         
-        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;border:0px dotted green;" class="clickable base">').append('&#10799;').click(function(){
-        //var close = $('<div style="font-size:20px;border:0px dotted green;width:100%;text-align:right;padding-right:5px;" class="clickable base">').append('&#10799;').click(function(){
-            $('#friend-management-find').hide();
-        });
-        
-        var add = $('<button style="font-size:9px;float:right;">').button({
+        var add = $('<button style="font-size:9px;float:right;width:100px;">').button({
             icons: {
                 primary: 'ui-icon-plus'
             },
             text: true,
             label: 'Add Friends'
         }).click(function(e){
-            e.preventDefault();
-            
-            /*
-            if ($('#friend-management-find').length > 0) {
-                $('#friend-management-find').remove();
-            } else {
-                fmhead.after(fmfind);
-            }
-            */
-           $('#friend-management-find').show();
-           
+            e.preventDefault();            
+            $('#friend-management-find').show();           
         });
                 
-        fmfind.append(close);
-        fmfind.append($('<div style="clear:both;>'));
-        
-        fmhead.append($('<span class="ride-management-segment-header">').append('Friends')).append(add);
+        fmhead.append($('<div class="ride-management-segment-header" style="display:inline-block;">').append('Friends')).append(add);
         fmhead.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin-top:10px;" />'));
         
         // available
         if (isArray(data.available)) {
             
-            fmfind.append($('<div style="clear:both;">').append('Available'));                        
+            fmfind.append($('<div class="ride-management-segment-subheader">').append('Available'));                        
             
             var table = $('<table class="ride-management available" width="100%">');
             var tr = $('<tr class="table-header">');
@@ -1006,7 +1029,7 @@
             tr.append($('<td>').append($('<span class="">').append('Skill')));
             tr.append($('<td>').append($('<span class="">').append('Experience')));
             tr.append($('<td>').append($('<span class="">').append('Style')));
-            tr.append($('<td>').append($('<span class="">').append('Guide')));
+            tr.append($('<td align="center">').append($('<span class="">').append('Add')));
             table.append(tr);
             
             for (var i=0; i < data.available.length; i++) {
@@ -1018,15 +1041,42 @@
                 tr.append($('<td>').append(friend.skill));
                 tr.append($('<td>').append(friend.experience));
                 tr.append($('<td>').append(friend.type));
-                tr.append($('<td>').append(friend.guide));
+                
+                var queue = $('<input type="checkbox">').data('friend', friend);
+                
+                tr.append($('<td align="center">').append(queue));
                 table.append(tr);
             }
             
-            fmfind.append(table);            
+            var update = $('<button style="font-size: 9px; margin-right: 1px;">').button({
+                icons: {
+                    primary: 'ui-icon-check'
+                },
+                text: true,
+                label: 'Update'                
+            }).click(function(e){
+                e.preventDefault();
+            });
+            
+            var cancel = $('<button style="font-size: 9px;">').button({
+                icons: {
+                    primary: 'ui-icon-close'
+                },
+                text: true,
+                label: 'Cancel'                
+            }).click(function(e){
+                e.preventDefault();
+                $('#friend-management-find').hide();
+            });
+                                    
+            fmfind.append(table);
+            fmfind.append($('<div style="text-align: center; margin: 5px 0px 5px 0px;">').append(update).append(cancel));
             
         }                
                         
         if (isArray(data.friends)) {
+            
+            fmlist.append($('<div class="ride-management-segment-subheader">').append('My Friends'));                        
             
             var table = $('<table class="ride-management friends" width="100%">');
             var tr = $('<tr class="table-header">');
@@ -1041,7 +1091,7 @@
             
             for (var i=0; i < data.friends.length; i++) {
                 var friend = data.friends[i];
-                tr = $('<tr>');
+                tr = $('<tr class="clickable">');
                 tr.append($('<td>').append(friend.first_name));
                 tr.append($('<td>').append(friend.last_name));
                 tr.append($('<td>').append(friend.email));
@@ -1049,6 +1099,26 @@
                 tr.append($('<td>').append(friend.experience));
                 tr.append($('<td>').append(friend.type));
                 tr.append($('<td>').append(friend.guide));
+                
+                tr.click(function(){
+                    
+                    var data = $(this).data('data');
+                    
+                    if ($('#' + 'friend-sub-row-' + data.id).length > 0) {
+                        $('#' + 'friend-sub-row-' + data.id).remove();
+                    } else {
+                        
+                        var r = $('<tr id="friend-sub-row-'+data.id+'" style="background-color: #fff !important;">');
+                        var c = $('<td colspan="7">');
+                        
+                        r.append(c.append(subfriend(instance, data)));
+
+                        $(this).closest('tr').after(r);
+                        
+                    }                                        
+                    
+                }).data('data', friend);
+                
                 table.append(tr);
             }
             
@@ -1060,6 +1130,231 @@
         div.append(fmfind);
         div.append(fmlist);
                         
+        return div;
+        
+    }
+    
+    function groupManagement(instance, data) {
+
+        var div = $('<div style="border:0px solid #333; width:100%;">');
+        
+        var gmadd = $('<div id="group-management-add" style="border:0px dotted blue; margin-bottom:3px; display:none; padding: 5px;">');
+        var gmlist = $('<div id="group-management-list">');
+        var gmhead = $('<div id="group-management-header" style="margin-top:10px;">');
+        
+        var add = $('<button style="font-size:9px;float:right;width:100px;">').button({
+            icons: {
+                primary: 'ui-icon-plus'
+            },
+            text: true,
+            label: 'Add Group'
+        }).click(function(e){
+            e.preventDefault();            
+            $('#group-management-add').show();           
+        });
+                
+        gmhead.append($('<div class="ride-management-segment-header" style="display:inline-block;">').append('Groups')).append(add);
+        gmhead.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin-top:10px;" />'));
+        
+        // group add form
+        var form = $('<form id="'+instance.id+'-add-group-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');        
+        var table = $('<table class="ride-management group" width="100%" align="center">');
+        
+        var group_name = $('<input type="text" id="'+instance.id+'-group_name" name="'+instance.id+'-group_name" class="required">');
+        var group_description = $('<input type="text" id="'+instance.id+'-group_description" name="'+instance.id+'-group_description" class="required">');
+        var group_deputy = $('<select id="'+instance.id+'-group_deputy" name="'+instance.id+'-group_deputy" class="large">');
+        var group_type = $('<select id="'+instance.id+'-group_type" name="'+instance.id+'-group_type" class="small">');
+        var group_join = $('<select id="'+instance.id+'-group_join" name="'+instance.id+'-group_join" class="small">');
+        var group_locked = $('<select id="'+instance.id+'-group_locked" name="'+instance.id+'-group_locked" class="small">');
+        
+        var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
+            icons: {
+                primary: 'ui-icon-check'
+            },
+            text: true,
+            label: 'Update'                                            
+        }).click(function(e){
+            e.preventDefault();
+            
+            $('#'+instance.id+'-add-group-form').validate({
+                debug: true,
+                errorPlacement: function(error, element) {
+                    return true;
+                },
+                ignore: '',
+                submitHandler: function(f) {
+                    
+                    var group = {
+                        name: $('#'+instance.id+'-group_name').val(),
+                        description: $('#'+instance.id+'-group_description').val(),
+                        owner: $('#'+instance.id+'-group_owner').val(),
+                        deputy: $('#'+instance.id+'-group_deputy').val(),
+                        type: $('#'+instance.id+'-group_type').val(),
+                        join: $('#'+instance.id+'-group_join').val(),                        
+                        locked: $('#'+instance.id+'-group_locked').val()                        
+                    };
+                    
+                    var post = $.extend(group, instance.options.data, {action: 'add'});
+                    server({
+                        callback: function(data, instance) {
+                            
+                        },
+                        data: post,
+                        url: Models.groups().urls.post,
+                        type: 'post'
+                    }, instance);                    
+                    
+                },
+                success: function() {
+                    
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }                
+            });
+            
+            $('#'+instance.id+'-add-group-form').submit();
+            
+        });
+        
+        var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">Cancel</button>').button({
+            icons: {
+                primary: 'ui-icon-close'
+            },
+            text: true,
+            label: 'Cancel'                                            
+        }).click(function(e){
+            e.preventDefault();
+            $('#group-management-add').hide();
+        });                        
+        
+        // row 1
+        var row = $('<tr>');
+        var a1 = $('<td rowspan="5" valign="middle">').append($('<div class="group-add-ad alley">'));        
+        var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
+        var c2 = $('<td colspan="5">').append(group_name);
+        var a2 = $('<td rowspan="5" valign="middle">').append($('<div class="group-add-ad alley">'));
+        row.append(a1).append(c1).append(c2).append(a2);
+        table.append(row);
+        
+        // row 2
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
+        c2 = $('<td colspan="5">').append(group_description);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 3
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Deputy:'));
+        c2 = $('<td colspan="5">').append(group_deputy);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 4
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Join:'));
+        c2 = $('<td>').append(group_join);
+        var c3 = $('<td>').append($('<div class="label-02">').append('Locked:'));
+        var c4 = $('<td>').append(group_locked);
+        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
+        var c6 = $('<td>').append(group_type);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        table.append(row);
+        
+        // row 5
+        row = $('<tr>');
+        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+        row.append(c1);
+        table.append(row);
+                        
+        // add ad div to form top
+        var ad = $('<div class="group-add-ad top">');
+        form.append(ad);
+        form.append(table);                  
+        ad = $('<div class="group-add-ad bottom">');
+        form.append(ad);                
+        
+        // selects
+        $.each(getOptions(instance, data.selects.deputies), function(index, option){
+            group_deputy.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.ridetypes), function(index, option){
+            group_type.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.joinable), function(index, option){
+            group_join.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.locked), function(index, option){
+            group_locked.append(option);
+        });
+        
+        group_deputy.selectmenu();
+        group_type.selectmenu();
+        group_join.selectmenu();
+        group_locked.selectmenu();
+        
+        gmadd.append(form);
+        
+        if (isArray(data.usergroups)) {
+            
+            gmlist.append($('<div class="ride-management-segment-subheader">').append('My Groups'));                        
+            
+            var table = $('<table class="ride-management groups" width="100%">');
+            var tr = $('<tr class="table-header">');
+            tr.append($('<td>').append($('<span class="">').append('Name')));
+            tr.append($('<td>').append($('<span class="">').append('Description')));
+            tr.append($('<td>').append($('<span class="">').append('Owner')));
+            tr.append($('<td>').append($('<span class="">').append('Deputy')));
+            tr.append($('<td>').append($('<span class="">').append('Type')));
+            tr.append($('<td>').append($('<span class="">').append('Join')));
+            tr.append($('<td>').append($('<span class="">').append('Locked')));
+            table.append(tr);
+            
+            for (var i=0; i < data.usergroups.length; i++) {
+                var group = data.usergroups[i];
+                tr = $('<tr class="clickable">');
+                tr.append($('<td>').append(group.name));
+                tr.append($('<td>').append(group.description));
+                tr.append($('<td>').append(group.owner));
+                tr.append($('<td>').append(group.deputy));
+                tr.append($('<td>').append(group.type));
+                tr.append($('<td>').append(group.join));
+                tr.append($('<td>').append(group.locked));
+                
+                tr.click(function(){
+                    
+                    var data = $(this).data('data');
+                    
+                    if ($('#' + 'group-sub-row-' + data.id).length > 0) {
+                        $('#' + 'group-sub-row-' + data.id).remove();
+                    } else {
+                        
+                        var r = $('<tr id="group-sub-row-'+data.id+'" style="background-color: #fff !important;">');
+                        var c = $('<td colspan="7">');
+                        
+                        r.append(c.append(subgroup(instance, data)));
+
+                        $(this).closest('tr').after(r);
+                        
+                    }                                        
+                    
+                }).data('data', group);
+                
+                table.append(tr);
+            }
+            
+            gmlist.append(table);
+            
+        }
+        
+        div.append(gmhead);
+        div.append(gmadd);
+        div.append(gmlist);
+
         return div;
         
     }
