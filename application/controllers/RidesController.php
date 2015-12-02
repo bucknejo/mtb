@@ -48,6 +48,12 @@ class RidesController extends Zend_Controller_Action {
         $query .= "where user_id = $user_id; ";
         $data["friends"] = $mapper->getCustomSelect($query);
         
+        // available
+        $query = "select * ";
+        $query .= "from users  ";
+        $query .= "where id not in (select friend_id from friends where user_id = $user_id);";
+        $data["available"] = $mapper->getCustomSelect($query);
+                
         // rides
         $query = "select a.*, ";
         $query .= "(select concat_ws(', ', last_name, first_name) from users where id = a.owner) as 'owner_name', ";

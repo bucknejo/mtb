@@ -958,11 +958,12 @@
         
         var div = $('<div style="border:0px solid #333; width:100%;">');
         
-        var fmfind = $('<div id="friend-management-find" style="width:100%;height:100px;border:1px dotted blue; margin-bottom:3px;display:none;">');
+        var fmfind = $('<div id="friend-management-find" style="width:100%;border:0px dotted blue; margin-bottom:3px;display:none;">');
         var fmlist = $('<div id="friend-management-list">');
         var fmhead = $('<div id="friend-management-header" style="margin-top:10px;">');
         
-        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;border:0px dotted green;" class="clickable base">').append('&#10799;').click(function(){
+        //var close = $('<div style="font-size:20px;border:0px dotted green;width:100%;text-align:right;padding-right:5px;" class="clickable base">').append('&#10799;').click(function(){
             $('#friend-management-find').hide();
         });
         
@@ -990,7 +991,40 @@
         fmfind.append($('<div style="clear:both;>'));
         
         fmhead.append($('<span class="ride-management-segment-header">').append('Friends')).append(add);
-        fmhead.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin:10px 0px;" />'));
+        fmhead.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin-top:10px;" />'));
+        
+        // available
+        if (isArray(data.available)) {
+            
+            fmfind.append($('<div style="clear:both;">').append('Available'));                        
+            
+            var table = $('<table class="ride-management available" width="100%">');
+            var tr = $('<tr class="table-header">');
+            tr.append($('<td>').append($('<span class="">').append('First Name')));
+            tr.append($('<td>').append($('<span class="">').append('Last Name')));
+            tr.append($('<td>').append($('<span class="">').append('Email')));
+            tr.append($('<td>').append($('<span class="">').append('Skill')));
+            tr.append($('<td>').append($('<span class="">').append('Experience')));
+            tr.append($('<td>').append($('<span class="">').append('Style')));
+            tr.append($('<td>').append($('<span class="">').append('Guide')));
+            table.append(tr);
+            
+            for (var i=0; i < data.available.length; i++) {
+                var friend = data.available[i];
+                tr = $('<tr>');
+                tr.append($('<td>').append(friend.first_name));
+                tr.append($('<td>').append(friend.last_name));
+                tr.append($('<td>').append(friend.email));
+                tr.append($('<td>').append(friend.skill));
+                tr.append($('<td>').append(friend.experience));
+                tr.append($('<td>').append(friend.type));
+                tr.append($('<td>').append(friend.guide));
+                table.append(tr);
+            }
+            
+            fmfind.append(table);            
+            
+        }                
                         
         if (isArray(data.friends)) {
             
@@ -1018,10 +1052,10 @@
                 table.append(tr);
             }
             
+            fmlist.append(table);
+            
         }
-        
-        fmlist.append(table);
-                        
+                                        
         div.append(fmhead);
         div.append(fmfind);
         div.append(fmlist);

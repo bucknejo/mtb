@@ -25,6 +25,13 @@ table.ride-management.friends tr:nth-child(even) {background: #ccc;}
 table.ride-management.friends tr:nth-child(odd) {background: #fff;}
 table.ride-management.friends tr td {border: 1px solid #333;padding: 2px 2px;}
 
+table.ride-management.available {border: 1px solid greenyellow; border-collapse: collapse; font-size: 10px;}
+table.ride-management.available tr {border: 1px solid greenyellow;}
+table.ride-management.available tr.table-header {background: #465a9b !important; color: #fff;}
+table.ride-management.available tr:nth-child(even) {background: #ccc;}
+table.ride-management.available tr:nth-child(odd) {background: #fff;}
+table.ride-management.available tr td {border: 1px solid greenyellow; padding: 2px 2px;}
+
 table.ride-management.rides {border: 1px solid #333; border-collapse: collapse; font-size: 11px;}
 table.ride-management.rides tr {border: 1px solid #333;}
 table.ride-management.rides tr:nth-child(even) {background: #ccc;}
