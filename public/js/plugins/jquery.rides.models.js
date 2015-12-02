@@ -181,11 +181,11 @@ var Models = function(){
     var groups = {
         name: 'groups',
         urls: {
+            get: 'groups/get',
             post: 'groups/save'
         }
-    }
+    };
     
-
     function getUsers() {
         return users;
     }
@@ -203,7 +203,7 @@ var Models = function(){
     }
     
     function getGroups() {
-        
+        return groups;
     }
     
     return {

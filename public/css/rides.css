@@ -28,6 +28,16 @@ table.ride-management.group input[type="text"] {border: 1px solid #333; font-siz
 table.ride-management.group select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.group select.large {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 
+table.ride-management.group.detail {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
+table.ride-management.group.detail tr {border: 0px solid #333;}
+table.ride-management.group.detail tr:nth-child(even) {background: #fff;}
+table.ride-management.group.detail tr:nth-child(odd) {background: #fff;}
+table.ride-management.group.detail tr td {border: 0px solid #333;padding: 5px 5px;}
+table.ride-management.group.detail tr span.label {color: #333; font-weight: bold; padding-right: 3px;}
+table.ride-management.group.detail tr span.content-green {color: green; padding-right: 3px;}
+table.ride-management.group.detail tr span.content-red {color: red; padding-right: 3px;}
+
+
 table.ride-management.friends {border: 1px solid #333; border-collapse: collapse; font-size: 10px;}
 table.ride-management.friends tr {border: 1px solid #333;}
 table.ride-management.friends tr.table-header {background: #465a9b !important; color: #fff;}

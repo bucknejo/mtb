@@ -59,7 +59,7 @@ class RidesController extends Zend_Controller_Action {
         $query .= "from groups ";
         $query .= "where owner = $user_id;";
         $data["usergroups"] = $mapper->getCustomSelect($query);
-
+        
         // rides
         $query = "select a.*, ";
         $query .= "(select concat_ws(', ', last_name, first_name) from users where id = a.owner) as 'owner_name', ";
@@ -111,6 +111,10 @@ class RidesController extends Zend_Controller_Action {
         // locked
         $locked = explode('|', $config->codes->rides->locked);
         $selects["locked"] = $locked;
+        
+        // group roles
+        $grouproles = explode('|', $config->codes->groups->roles);
+        $selects["grouproles"] = $grouproles;
         
         // groups
         $query = "select concat(id, ':', name) as 'option' ";

@@ -174,3 +174,181 @@ avarts
             user_experience.append(option);
         });
         
+
+================================================================================
+
+        // group add form
+        var form = $('<form id="'+instance.id+'-add-group-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');        
+        var table = $('<table class="ride-management group" width="100%" align="center">');
+        
+        var group_name = $('<input type="text" id="'+instance.id+'-group_name" name="'+instance.id+'-group_name" class="required">');
+        var group_description = $('<input type="text" id="'+instance.id+'-group_description" name="'+instance.id+'-group_description" class="required">');
+        var group_deputy = $('<select id="'+instance.id+'-group_deputy" name="'+instance.id+'-group_deputy" class="large">');
+        var group_type = $('<select id="'+instance.id+'-group_type" name="'+instance.id+'-group_type" class="small">');
+        var group_join = $('<select id="'+instance.id+'-group_join" name="'+instance.id+'-group_join" class="small">');
+        var group_locked = $('<select id="'+instance.id+'-group_locked" name="'+instance.id+'-group_locked" class="small">');
+        
+        var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
+            icons: {
+                primary: 'ui-icon-check'
+            },
+            text: true,
+            label: 'Update'                                            
+        }).click(function(e){
+            e.preventDefault();
+            
+            $('#'+instance.id+'-add-group-form').validate({
+                debug: true,
+                errorPlacement: function(error, element) {
+                    return true;
+                },
+                ignore: '',
+                submitHandler: function(f) {
+                    
+                    var group = {
+                        name: $('#'+instance.id+'-group_name').val(),
+                        description: $('#'+instance.id+'-group_description').val(),
+                        owner: $('#'+instance.id+'-group_owner').val(),
+                        deputy: $('#'+instance.id+'-group_deputy').val(),
+                        type: $('#'+instance.id+'-group_type').val(),
+                        join: $('#'+instance.id+'-group_join').val(),                        
+                        locked: $('#'+instance.id+'-group_locked').val()                        
+                    };
+                    
+                    var post = $.extend(group, instance.options.data, {action: 'add'});
+                    server({
+                        callback: function(data, instance) {
+                            
+                        },
+                        data: post,
+                        url: Models.groups().urls.post,
+                        type: 'post'
+                    }, instance);                    
+                    
+                },
+                success: function() {
+                    
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass(errorClass);
+                }                
+            });
+            
+            $('#'+instance.id+'-add-group-form').submit();
+            
+        });
+        
+        var cancel = $('<button id="'+instance.id+'-ride_cancel" class="ride-add-button">Cancel</button>').button({
+            icons: {
+                primary: 'ui-icon-close'
+            },
+            text: true,
+            label: 'Cancel'                                            
+        }).click(function(e){
+            e.preventDefault();
+            $('#group-management-add').hide();
+        });                        
+        
+        // row 1
+        var row = $('<tr>');
+        var a1 = $('<td rowspan="6" valign="middle">').append($('<div class="group-add-ad alley">'));        
+        var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
+        var c2 = $('<td colspan="5">').append(group_name);
+        var a2 = $('<td rowspan="6" valign="middle">').append($('<div class="group-add-ad alley">'));
+        row.append(a1).append(c1).append(c2).append(a2);
+        table.append(row);
+        
+        // row 2
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
+        c2 = $('<td colspan="5">').append(group_description);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 3
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Deputy:'));
+        c2 = $('<td colspan="5">').append(group_deputy);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 4
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Join:'));
+        c2 = $('<td>').append(group_join);
+        var c3 = $('<td>').append($('<div class="label-02">').append('Locked:'));
+        var c4 = $('<td>').append(group_locked);
+        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
+        var c6 = $('<td>').append(group_type);
+        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        table.append(row);
+        
+        // row 5
+        row = $('<tr>');
+        c1 = $('<td valign="top">').append($('<div class="label-02">').append('Members:'));
+        var members = $('<table class="ride-management friends" style="width: 450px;">');
+        if (isArray(data.friends)) {
+            
+            var tr = $('<tr class="table-header">');
+            tr.append($('<td>').append('Name'));
+            tr.append($('<td>').append('Skill'));
+            tr.append($('<td>').append('Experience'));
+            tr.append($('<td>').append('Style'));
+            tr.append($('<td align="center">').append('Add'));
+            members.append(tr);
+            
+            for (var i=0; i < data.friends.length; i++) {
+                var friend = data.friends[i];
+                tr = $('<tr>');
+                tr.append($('<td>').append(friend.first_name + ' ' + friend.last_name));
+                tr.append($('<td>').append(friend.skill));
+                tr.append($('<td>').append(friend.experience));
+                tr.append($('<td>').append(friend.type));
+                
+                var queue = $('<input type="checkbox">').data('friend', friend);                
+                tr.append($('<td align="center">').append(queue));
+                
+                members.append(tr);
+            }
+            
+        }
+        c2 = $('<td colspan="5">').append(members);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 6
+        row = $('<tr>');
+        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+        row.append(c1);
+        table.append(row);
+                        
+        // add ad div to form top
+        var ad = $('<div class="group-add-ad top">');
+        form.append(ad);
+        form.append(table);                  
+        ad = $('<div class="group-add-ad bottom">');
+        form.append(ad);                
+        
+        // selects
+        $.each(getOptions(instance, data.selects.deputies), function(index, option){
+            group_deputy.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.ridetypes), function(index, option){
+            group_type.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.joinable), function(index, option){
+            group_join.append(option);
+        });
+        
+        $.each(getOptions(instance, data.selects.locked), function(index, option){
+            group_locked.append(option);
+        });
+        
+        group_deputy.selectmenu();
+        group_type.selectmenu();
+        group_join.selectmenu();
+        group_locked.selectmenu();
+        
+        gmadd.append(form);
