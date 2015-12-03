@@ -138,7 +138,7 @@ var Models = function(){
         name: 'users',
         urls: {
             get: 'users/users',
-            post: 'users/save'
+            post: 'users/post'
         }
     };
     
@@ -160,7 +160,7 @@ var Models = function(){
         name: 'rides',
         urls: {
             get: 'rides/rides',
-            post: 'rides/save'
+            post: 'rides/post'
         }
     };
     
@@ -182,7 +182,7 @@ var Models = function(){
         name: 'groups',
         urls: {
             get: 'groups/get',
-            post: 'groups/save'
+            post: 'groups/post'
         }
     };
     

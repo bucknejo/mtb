@@ -42,11 +42,26 @@ class GroupsController extends Zend_Controller_Action
         $query = "select a.*, ";
         $query .= "(select first_name from users where id = a.user_id) as 'first_name', ";
         $query .= "(select last_name from users where id = a.user_id) as 'last_name', ";
-        $query .= "(select skill from users where id = a.user_id) as 'skill' ";
+        $query .= "(select skill from users where id = a.user_id) as 'skill', ";
+        $query .= "(select experience from users where id = a.user_id) as 'experience', ";
+        $query .= "(select type from users where id = a.user_id) as 'type' ";
         $query .= "from group_members a ";
         $query .= "where group_id = $id;";        
         $data["members"] = $mapper->getCustomSelect($query);
         
+        // friends
+        $query = "select a.*, ";
+        $query .= "(select first_name from users where id = a.friend_id) as 'first_name', ";
+        $query .= "(select last_name from users where id = a.friend_id) as 'last_name', ";
+        $query .= "(select email from users where id = a.friend_id) as 'email', ";
+        $query .= "(select skill from users where id = a.friend_id) as 'skill', ";
+        $query .= "(select experience from users where id = a.friend_id) as 'experience', ";
+        $query .= "(select type from users where id = a.friend_id) as 'type', ";
+        $query .= "(select guide from users where id = a.friend_id) as 'guide' ";
+        $query .= "from	friends a ";
+        $query .= "where user_id = $user_id; ";
+        $data["friends"] = $mapper->getCustomSelect($query);
+                
         // drop downs
         $selects = array();
         $config = Zend_Registry::get('config');                
@@ -68,9 +83,14 @@ class GroupsController extends Zend_Controller_Action
         $selects["ridetypes"] = $ridetypes;
         
         // deputies
-        $query = "select concat(id, ':', last_name, ', ', first_name) as 'option' ";
-        $query .= "from users ";
-        $query .= "where id in (select friend_id from friends where user_id = $user_id);";
+        $query = "select concat(b.user_id, ':', b.last_name, ', ', b.first_name) as 'option' ";
+        $query .= "from  ";
+        $query .= "(select a.*, ";
+        $query .= "(select first_name from users where id = a.user_id) as 'first_name', ";
+        $query .= "(select last_name from users where id = a.user_id) as 'last_name', ";
+        $query .= "(select skill from users where id = a.user_id) as 'skill' ";
+        $query .= "from group_members a ";
+        $query .= "where a.group_id = $id) b; ";
         $deputies = $mapper->getCustomSelect($query);        
         $selects["deputies"] = $this->_helper->utilities->arrayitize($deputies);        
         

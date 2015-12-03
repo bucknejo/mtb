@@ -352,3 +352,66 @@ avarts
         group_locked.selectmenu();
         
         gmadd.append(form);
+
+
+                var update = $('<button style="display:inline-block;margin:2px;">').button({
+                    icons: {
+                        primary: 'ui-icon-pencil'
+                    },
+                    text: false,
+                    label: 'View Ride'                                        
+                });                        
+
+                //tr.append($('<td style="width:5%;text-align:center;">').append(data[i].id));
+                //tr.append($('<td style="width:10%;text-align:center;">').append(update).append(view));
+
+                var view = $('<button style="display:inline-block;margin:2px;">').button({
+                    icons: {
+                        primary: 'ui-icon-document'
+                    },
+                    text: false,
+                    label: 'View Ride'                    
+                });
+                        
+                view.click(function(){
+                    
+                }).data('data', rides[i]);
+
+                tr.click(function(){
+
+                    var data = $(this).data('data');
+                    
+                    if ($('#' + 'sub-row-' + data.id).length > 0) {
+                        $('#' + 'sub-row-' + data.id).remove();
+                    } else {
+                        
+                        var r = $('<tr id="sub-row-'+data.id+'" style="background-color: #fff !important;">');
+                        var c = $('<td colspan="9">');
+
+                        r.append(c.append(subride(instance, data, true)));
+
+                        $(this).closest('tr').after(r);
+                        
+                    }                                        
+                    
+                }).data('data', rides[i]);
+
+
+                tr.click(function(){
+                    
+                    var data = $(this).data('data');
+                    
+                    if ($('#' + 'friend-sub-row-' + data.id).length > 0) {
+                        $('#' + 'friend-sub-row-' + data.id).remove();
+                    } else {
+                        
+                        var r = $('<tr id="friend-sub-row-'+data.id+'" style="background-color: #fff !important;">');
+                        var c = $('<td colspan="7">');
+                        
+                        r.append(c.append(subfriend(instance, data)));
+
+                        $(this).closest('tr').after(r);
+                        
+                    }                                        
+                    
+                }).data('data', friend);
