@@ -251,23 +251,6 @@ class RidesController extends Zend_Controller_Action {
     
     public function addressesAction() {
         
-        $data = array();
-        $selects = array();
-        
-        $id = $this->_getParam('id', 0);        
-        
-        // addresses
-        $query = "select concat(id, ':', description) as 'option' ";
-        $query .= "from addresses ";
-        $query .= "where location_id = $id;";
-        
-        $mapper = new Application_Model_TableMapper();
-        $addresses = $mapper->getCustomSelect($query);        
-        $selects["addresses"] = $this->_helper->utilities->arrayitize($addresses);
-
-        $data["selects"] = $selects;        
-        $this->view->data = json_encode($data);
-        $this->view->layout()->disableLayout();
         
     }
     

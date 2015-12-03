@@ -159,22 +159,23 @@ var Models = function(){
         ],
         name: 'rides',
         urls: {
-            get: 'rides/rides',
-            post: 'rides/post'
+            get: 'rides/get',
+            post: 'rides/post',
+            rides: 'rides/rides'
         }
     };
     
     var locations = {
         name: 'locations',
         urls: {
-            get: 'rides/locations/id/'
+            get: 'locations/get/id/'
         }        
     };
     
     var addresses = {
         name: 'addresses',
         urls: {
-            get: 'rides/addresses/id/'
+            get: 'addresses/get/id/'
         }        
     };
     

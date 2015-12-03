@@ -624,7 +624,7 @@
                 
             },
             data: d,
-            url: rides.urls.get,
+            url: rides.urls.rides,
             type: 'get'
         }, instance);    
                 
