@@ -145,7 +145,12 @@ class RidesController extends Zend_Controller_Action {
         $selects["deputies"] = $this->_helper->utilities->arrayitize($deputies);
                         
         $data["selects"] = $selects;
-                
+        
+        // csrf token
+        $csrf = new Zend_Session_Namespace("csrf");
+        $token = $csrf->token;
+        $data["token"] = $token;
+                                
         $this->view->data = json_encode($data);
         
         //$this->_helper->viewRenderer->setNoRender(true);

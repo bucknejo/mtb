@@ -86,9 +86,7 @@
     }
     
     function main(data, instance) {
-                
-        log(instance, 'main', 'data', data);
-               
+                               
         if (isArray(data.ads)) {
             
             //instance.item.empty();

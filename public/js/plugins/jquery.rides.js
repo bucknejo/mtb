@@ -86,6 +86,8 @@
     
     function main(data, instance) {
         
+        log(instance, 'main', 'token', data.token);
+        
         // build user section        
         instance.item.empty().append(addUserDetails(instance, data));                
         instance.item.append(addRideDetails(instance, data));

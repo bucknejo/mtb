@@ -14,8 +14,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Action Helpers
         Zend_Controller_Action_HelperBroker::addPath(
             APPLICATION_PATH .'/controllers/helpers');
-
-
+        
     }
 
     function _initConfig() {
@@ -35,7 +34,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             //$front = Zend_Controller_Front::getInstance();
             //$front->registerPlugin(new JEB_SSL_Plugin_SSL(), 1);
             //$front->registerPlugin(new JEB_Controller_Plugin_ACL(), 1);
-
+            
             
         } catch (Exception $e) {
             

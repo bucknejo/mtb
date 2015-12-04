@@ -415,3 +415,12 @@ avarts
                     }                                        
                     
                 }).data('data', friend);
+
+            /*
+            $token = new Zend_Form_Element_Hash('token');
+            $token->setSalt(md5(uniqid(rand(), TRUE)));
+            $token->setTimeout($timeout);                       
+            $token->initCsrfToken();
+            */
+            
+resources.frontController.plugins.token.generate = "Application_Plugin_CSRFTokenGenerate"
