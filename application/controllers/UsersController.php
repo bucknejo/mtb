@@ -29,6 +29,15 @@ class UsersController extends Zend_Controller_Action
     
     public function postAction() {
         
+        $x = 1;
+        
+        $id = $this->_getParam("id", 0);
+        
+        if ($this->getRequest()->isPost()) {
+            
+        }
+        
+        
     }
 
     public function usersAction() {

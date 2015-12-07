@@ -3,8 +3,84 @@
     ;(function($) {
         
         $(document).ready(function(){
+            
+            function server(request) {
+
+                var x = {};
+
+                $.ajax({
+                    url: request.url,
+                    asynch: (request.asynch) ? (request.asynch) : true,
+                    cache: (request.cache) ? (request.cache) : false,
+                    dataType: 'json',
+                    type: request.type,
+                    data: request.data,
+                    beforeSend: function() {
+
+                    },
+                    success: function(response) {
+                        x = response;
+                    },
+                    error: function(data, errorThrown) {
+                        console.log('server', 'error object: ', JSON.stringify(data));
+                        console.log('server', 'error thrown: ' + errorThrown, {});
+                    },
+                    complete: function() {
+                        if (request.callback) {
+                            request.callback(x);
+                        } else {
+                            console.log('not a function');
+                        }
+                    }
+
+                });
+
+            }
+            
         
-            $('#site-sign-in').button().click(function(){
+            $('#site-sign-in').button().click(function(e){
+                
+                e.preventDefault();
+                
+                var request = {
+                    url: 'login/authenticate',
+                    type: 'post',
+                    data: {
+                        email: $('#site-sign-in-email').val(),
+                        password: $('#site-sign-in-password').val()                                            
+                    },
+                    callback: function(data) {
+                        
+                        if (data.success) {
+                            location.replace('rides');
+                        } else {
+                            $('#login-error-message').text("Message: " + data.message);
+                            $('#login-error-code').text("Code: " + data.code);
+                            $('#login-error').show();
+                        } 
+                            
+                        
+                    }
+                };
+                                
+                $('#site-sign-in-form').validate({
+                    debug: true,
+                    errorPlacement: function(error, element) {
+                        return true;
+                    },
+                    ignore: '',
+                    submitHandler: function(f) {
+                        server(request);                        
+                    },
+                    success: function() {
+                        $('#login-error').hide();
+                    },
+                    unhighlight: function(element, errorClass) {
+                        $(element).removeClass(errorClass);
+                    }
+                });
+                
+                $('#site-sign-in-form').submit();
                 
             });
             
@@ -22,27 +98,27 @@
     <div style="font-size: 12px; margin: 0 auto; margin-top: 100px; width: 50%;">
 
         <div style="float: left;">
-            <form>
+            <form id="site-sign-in-form"  action="">
                 <div>Sign In</div>
-                <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="" name="" />
+                <div style="margin-top: 3px;">
+                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="site-sign-in-email" name="site-sign-in-email" class="required" />
                 </div>
-                <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="" name="" />
+                <div style="margin-top: 3px;">
+                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="site-sign-in-password" name="site-sign-in-password" class="required" />
                 </div>
                 <div style="margin-top: 10px; text-align: center;">
                     <button id="site-sign-in" name="" style="width: 125px;">Submit</button>
-                </div>                
+                </div>
             </form>
         </div>
         <div style="float: left; border-left: 3px solid #465a9b; margin-left: 15px; padding-left: 15px;">
             <form>
                 <div>Sign Up</div>
                 <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="" name="" />
+                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="site-sign-up-email" name="site-sign-up-email" class="required" />
                 </div>
                 <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="" name="" />
+                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="site-sign-up-password" name="site-sign-up-password" class="required" />
                 </div>
                 <div style="margin-top: 10px; text-align: center;">
                     <button id="site-sign-up" name="" style="width: 125px;">Submit</button>
@@ -52,4 +128,8 @@
         
     </div>
     <div style="clear: both;margin-bottom: 100px;"></div>
+    <div style="margin-top: 3px; display: none; text-align: center; padding: 5px; width: 30%; margin: 0 auto; margin-bottom: 20px;" class="error" id="login-error">
+        <div id="login-error-message"></div>
+        <div id="login-error-code"></div>
+    </div>
 </section>

@@ -127,6 +127,8 @@ div.side {
 
 .error {color: #990000;}
 input.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+div.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+
 
 /*  GO FULL WIDTH AT LESS THAN 480 PIXELS */
 

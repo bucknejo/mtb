@@ -7,12 +7,16 @@ class Application_Plugin_CSRFTokenGenerate extends Zend_Controller_Plugin_Abstra
         try {
             
             $config = Zend_Registry::get('config');                
-            $active = $config->authentication->active;
             $timeout = $config->authentication->timeout;
             
-            $csrf = new Zend_Session_Namespace("csrf");
-            $csrf->setExpirationSeconds($timeout * 60);
-            $csrf->token = md5(uniqid(rand(), TRUE));
+            $csrf = new Zend_Session_Namespace("csrf");            
+            $token = $csrf->token;
+            
+            if ($token == null) {
+                $csrf->setExpirationSeconds($timeout * 60);
+                $csrf->token = md5(uniqid(rand(), TRUE));                
+            }
+            
             
                                     
         } catch (Exception $e) {

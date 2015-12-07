@@ -17,35 +17,66 @@ class LoginController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
+        $ajaxContext->addActionContext('authenticate', 'json');
         $ajaxContext->initContext();                                        
         
     }
     
     public function indexAction() {
 
+        
+    }
+    
+    public function authenticateAction() {
+        
         $table_name = 'users';        
         
-        $user_id = $this->_getParam('user_id', 'Missing User ID');
+        $email = $this->_getParam('email', 'Missing User ID');
         $password = $this->_getParam('password', '');
 
         $values = array(
-            'user_id' => $user_id,
+            'email' => $email,
             'password' => $password,
         );
 
-        if ($this->getRequest()->isPost()) {
+        $data = array();
+        
+        try {
             
-            if ($this->_process($table_name, $values)) {
-                $auth = Zend_Auth::getInstance();
+            if ($this->getRequest()->isPost()) {
+
+                if ($this->_process($table_name, $values)) {
+
+                    $data["success"] = true; 
+                    $data["message"] = "Authentication success";
+                    $data["code"] = 0;                 
+
+                } else {
+
+                    $data["success"] = false; 
+                    $data["message"] = "Authentication failed";
+                    $data["code"] = -1;                 
+
+                }            
+
             } else {
-                $message = "Cannot Authenticate: " . $values['user_id'];
+
+                $data["success"] = false; 
+                $data["message"] = "Authentication failed.";
+                $data["code"] = -2;                 
+
             }
-            
-            
-        } else {
+                        
+        } catch (Exception $ex) {
+
+            $data["success"] = false; 
+            $data["message"] = $ex->getMessage();
+            $data["code"] = $ex->getCode();                 
             
         }
         
+        $this->view->data = json_encode($data);
+        $this->view->layout()->disableLayout();        
         
     }
     
@@ -61,7 +92,7 @@ class LoginController extends Zend_Controller_Action
         }
         
         $adapter = $this->_getAuthAdapter($table_name);
-        $adapter->setIdentity($values['user_id']);
+        $adapter->setIdentity($values['email']);
         //$adapter->setCredential(md5($values['password']));
         $adapter->setCredential($values['password']);
 
@@ -82,7 +113,7 @@ class LoginController extends Zend_Controller_Action
         $authAdapter = new Zend_Auth_Adapter_DbTable($dbAdapter);
 
         $authAdapter->setTableName($table_name);
-        $authAdapter->setIdentityColumn('user_id');
+        $authAdapter->setIdentityColumn('email');
         $authAdapter->setCredentialColumn('password');
 
         return $authAdapter;

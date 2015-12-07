@@ -4,6 +4,7 @@
         debug: true,
         name: 'Ride Management',
         states: {},
+        token: null,
         urls: {
             main: 'rides/main'
         }
@@ -75,7 +76,7 @@
     
     function build(instance) {
     
-        var d = $.extend({}, instance.options.data);
+        var d = $.extend({}, instance.options);
         server({
             callback: main,
             data: d,
@@ -87,10 +88,16 @@
     function main(data, instance) {
         
         log(instance, 'main', 'token', data.token);
+        instance.options.token = data.token;
         
-        // build user section        
-        instance.item.empty().append(addUserDetails(instance, data));                
-        instance.item.append(addRideDetails(instance, data));
+        if (data.user_id > 0) {
+            // build user section        
+            instance.item.empty().append(addUserDetails(instance, data));                
+            instance.item.append(addRideDetails(instance, data));            
+        } else {
+            location.replace('login');
+        }
+        
         
     }
     
@@ -203,7 +210,7 @@
                                 locked: $('#'+instance.id+'-group_locked-'+gid).val()                        
                             };
 
-                            var post = $.extend(group, instance.options.data, {action: 'add'});
+                            var post = $.extend(group, instance.options, {action: 'add'});
                             server({
                                 callback: function(data, instance) {
 
@@ -404,7 +411,7 @@
         div.append(close);
         div.append($('<div style="clear:both;>'));
         
-        var d = $.extend({}, instance.options.data, data, {process: "GET-ONE", oper: "SELECT"});
+        var d = $.extend({}, instance.options, data, {process: "GET-ONE", oper: "SELECT"});
         
         var rides = Models.rides();
         
@@ -898,7 +905,7 @@
                         public: $('#'+instance.id+'-ride_public').val()                        
                     };
                     
-                    var post = $.extend(ride, instance.options.data, {action: 'add'});
+                    var post = $.extend(ride, instance.options, {action: 'add'});
                     server({
                         callback: function(data, instance) {
                             
@@ -1159,7 +1166,9 @@
                         style: $('#'+instance.id+'-user_style').val()                        
                     };
                     
-                    var post = $.extend(user, instance.options.data, {action: 'add'});
+                    var post = $.extend(user, instance.options, {action: 'add'});
+                    
+                    log(instance, 'editUserInfoForm', 'post', post);
                     server({
                         callback: function(data, instance) {
                             
@@ -1474,7 +1483,7 @@
                         locked: $('#'+instance.id+'-group_locked').val()                        
                     };
                     
-                    var post = $.extend(group, instance.options.data, {action: 'add'});
+                    var post = $.extend(group, instance.options, {action: 'add'});
                     server({
                         callback: function(data, instance) {
                             

@@ -23,12 +23,19 @@ class RidesController extends Zend_Controller_Action {
     
     public function mainAction() {
         
+        $auth = Zend_Auth::getInstance();
+        
+        $user_id = 0;
+        
+        if ($auth->hasIdentity()) {
+            $user_id = $id = $auth->getIdentity()->id;
+        } 
+        
         $mapper = new Application_Model_TableMapper();
         
-        $data = array();    
-        
-        $user_id = 1;
-        
+        $data = array();            
+        $data["user_id"] = $user_id;
+                
         // user
         $query = "select a.* ";
         $query .= "from users a ";

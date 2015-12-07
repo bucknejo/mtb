@@ -13,17 +13,25 @@ class Application_Plugin_CSRFTokenValidate extends Zend_Controller_Plugin_Abstra
             
         try {
             
-            $token = $request->getParam("token");
+            $config = Zend_Registry::get('config');                
+            $active = $config->authentication->active;
             $csrf = new Zend_Session_Namespace("csrf");
             
-            $cache = $csrf->token;
+            if ($active == 1) {
+                
+                $token = $request->getParam("token");
+                $cache = $csrf->token;
+                
+                if ($cache == $token) {
+                    $csrf->authorized = "1";
+                } else {
+                    $csrf->authorized = "0";
+                }
             
-            if ($cache == $token) {
-                $x = "we're good.";
             } else {
-                $x = "we're cheating";
+                $csrf->authorized = "1";                
             }
-                                    
+                        
         } catch (Exception $ex) {
 
         }
