@@ -18,6 +18,7 @@ class LoginController extends Zend_Controller_Action
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
         $ajaxContext->addActionContext('authenticate', 'json');
+        $ajaxContext->addActionContext('register', 'json');
         $ajaxContext->initContext();                                        
         
     }
@@ -27,50 +28,157 @@ class LoginController extends Zend_Controller_Action
         
     }
     
+    public function logoutAction() {
+        Zend_Session::namespaceUnset("csrf");
+        Zend_Auth::getInstance()->clearIdentity();
+        $this->_helper->redirector('index', 'login', 'default');        
+    }
+    
+    public function registerAction() {
+
+        
+        $email = $this->_getParam('email', 'Missing User ID');
+        $password = $this->_getParam('password', '');
+        
+        $data = array();
+        
+        try {
+            
+            $date = date('Y-m-d');
+            
+            $salt = $this->_helper->utilities->create_salt();
+            $hash = $this->_helper->utilities->create_hash($password, $salt);
+            
+            $insert = array(
+                "date_created" => $date,
+                "last_updated" => $date,
+                "active" => 1,
+                "password" => $hash,
+                "salt" => $salt,
+                "email" => $email                    
+            );
+            
+            $mapper = new Application_Model_TableMapper();
+            $table_name = "users";
+            
+            $i = $mapper->insertItem($table_name, $insert);
+            
+            if ($i > 0) {
+                $query = "select * from users where email='$email';";
+                $users = $mapper->getCustomSelect($query);
+                
+                if (count($users) > 0) {
+                    
+                    $values = array(
+                        'email' => $email,
+                        'password' => $hash,
+                    );
+                                        
+                    if ($this->_process($table_name, $values)) {
+
+                        $data["success"] = true; 
+                        $data["message"] = "Registration success";
+                        $data["code"] = 0;                 
+
+                    } else {
+
+                        $data["success"] = false; 
+                        $data["message"] = "Account created, authentication failed";
+                        $data["code"] = -1;                 
+
+                    }                                                    
+                    
+                }
+                
+            }
+                                                           
+        } catch (Exception $ex) {
+
+            $data["success"] = false; 
+            $data["message"] = "Registration failed: ".$ex->getMessage();
+            $data["code"] = $ex->getCode();                 
+            
+        }
+        
+        $this->view->data = json_encode($data);
+        $this->view->layout()->disableLayout();        
+        
+        
+    }
+    
     public function authenticateAction() {
         
+        $mapper = new Application_Model_TableMapper();
         $table_name = 'users';        
         
         $email = $this->_getParam('email', 'Missing User ID');
         $password = $this->_getParam('password', '');
 
-        $values = array(
-            'email' => $email,
-            'password' => $password,
-        );
-
         $data = array();
         
         try {
-            
-            if ($this->getRequest()->isPost()) {
+        
+            $query = "select * from users where email='$email';";
+            $users = $mapper->getCustomSelect($query);
 
-                if ($this->_process($table_name, $values)) {
+            if (count($users) > 0) {
+                $user = $users[0];
+                $salt = $user["salt"];
+                $key = $user["password"];
 
-                    $data["success"] = true; 
-                    $data["message"] = "Authentication success";
-                    $data["code"] = 0;                 
+                $hash = $this->_helper->utilities->create_hash($password, $salt); 
+
+                if ($key == $hash) {
+
+                    $values = array(
+                        'email' => $email,
+                        'password' => $key,
+                    );
+
+                    if ($this->getRequest()->isPost()) {
+
+                        if ($this->_process($table_name, $values)) {
+
+                            $data["success"] = true; 
+                            $data["message"] = "Authentication success";
+                            $data["code"] = 0;                 
+
+                        } else {
+
+                            $data["success"] = false; 
+                            $data["message"] = "Authentication failed: Invalid user id or password.";
+                            $data["code"] = -1;                 
+
+                        }            
+
+                    } else {
+
+                        $data["success"] = false; 
+                        $data["message"] = "Authentication failed: GET request detected.";
+                        $data["code"] = -2;                 
+
+                    }                
 
                 } else {
-
+                    
                     $data["success"] = false; 
-                    $data["message"] = "Authentication failed";
-                    $data["code"] = -1;                 
-
-                }            
+                    $data["message"] = "Authentication failed: Password does not match user id.";
+                    $data["code"] = -3;                 
+                    
+                }                                
 
             } else {
-
+                
                 $data["success"] = false; 
-                $data["message"] = "Authentication failed.";
-                $data["code"] = -2;                 
-
+                $data["message"] = "Authentication failed: Could not find account associated with provided email [$email].";
+                $data["code"] = -4;                 
+                
             }
                         
         } catch (Exception $ex) {
 
             $data["success"] = false; 
-            $data["message"] = $ex->getMessage();
+            $data["message"] = "Authentication failed: ".$ex->getMessage();
             $data["code"] = $ex->getCode();                 
             
         }

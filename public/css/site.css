@@ -126,8 +126,13 @@ div.side {
 }
 
 .error {color: #990000;}
-input.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+input.error {border: 2px solid #990000 !important; background-color: #f5d8da;}
 div.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+span.error {border: 1px solid #990000 !important; background-color: #f5d8da;}
+
+.site-label-01 {width: 125px;}
+.site-label-02 {width: 125px; font-size: 13px; font-weight: bold;}
+
 
 
 /*  GO FULL WIDTH AT LESS THAN 480 PIXELS */

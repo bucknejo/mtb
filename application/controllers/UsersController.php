@@ -19,7 +19,6 @@ class UsersController extends Zend_Controller_Action
         $ajaxContext->addActionContext('users', 'json');
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
-        //$ajaxContext->setAutoJsonSerialization(false);
         $ajaxContext->initContext();                                
     }
     

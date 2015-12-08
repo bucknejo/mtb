@@ -424,3 +424,5 @@ avarts
             */
             
 resources.frontController.plugins.token.generate = "Application_Plugin_CSRFTokenGenerate"
+
+        //$ajaxContext->setAutoJsonSerialization(false);

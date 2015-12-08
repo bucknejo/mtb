@@ -4,6 +4,8 @@
         
         $(document).ready(function(){
             
+            var register = false;
+            
             function server(request) {
 
                 var x = {};
@@ -16,7 +18,7 @@
                     type: request.type,
                     data: request.data,
                     beforeSend: function() {
-
+                        console.log(JSON.stringify(request.data));
                     },
                     success: function(response) {
                         x = response;
@@ -40,37 +42,73 @@
         
             $('#site-sign-in').button().click(function(e){
                 
-                e.preventDefault();
+                console.log('register: ' + register);
                 
-                var request = {
-                    url: 'login/authenticate',
+                e.preventDefault();
+                                
+                var request = {                    
                     type: 'post',
-                    data: {
-                        email: $('#site-sign-in-email').val(),
-                        password: $('#site-sign-in-password').val()                                            
-                    },
+                    cache: false,
                     callback: function(data) {
                         
                         if (data.success) {
                             location.replace('rides');
                         } else {
-                            $('#login-error-message').text("Message: " + data.message);
-                            $('#login-error-code').text("Code: " + data.code);
+                            $('#login-error-message').text("[" + data.code + "] " + data.message);
+                            //$('#login-error-code').text("Code: " + data.code);
                             $('#login-error').show();
-                        } 
-                            
+                        }                             
                         
                     }
                 };
-                                
+                
+                var rules = {};
+                rules['site-sign-up-password-repeat'] = {
+                    required: {
+                        depends: function(){
+                            return register;
+                        }
+                    }
+                };
+                
+                if (register) {
+                    rules['site-sign-up-password-repeat'] = {
+                        equalTo: "#site-sign-in-password"
+                    };                    
+                } else {
+                    //delete rules['site-sign-up-password-repeat'];
+                    try {
+                        $('#site-sign-up-password-repeat').rules('remove');
+                    } catch (e) {
+                        console.log("Exception: " + JSON.stringify(e));
+                    }
+                    
+                }
+                                                
                 $('#site-sign-in-form').validate({
+                    rules: rules,
                     debug: true,
                     errorPlacement: function(error, element) {
                         return true;
                     },
                     ignore: '',
                     submitHandler: function(f) {
-                        server(request);                        
+                        
+                        console.log('register (submit): ' + register);
+                        
+                        if (register) {
+                            request.url = 'login/register';
+                        } else {
+                            request.url = 'login/authenticate';
+                        }
+                        
+                        request.data = {
+                            email: $('#site-sign-in-email').val(),
+                            password: $('#site-sign-in-password').val()                                            
+                        };
+                        
+                        server(request);   
+                        
                     },
                     success: function() {
                         $('#login-error').hide();
@@ -84,9 +122,27 @@
                 
             });
             
-            $('#site-sign-up').button().click(function(){
-                
-            });                        
+            // trigger registration form
+            $('#site-sign-up').button().click(function(e){
+                e.preventDefault();
+                register = true;
+                $(this).hide();
+                $('#site-sign-up-password-repeat-row').show();
+                $('#site-sign-up-cancel').show();
+                $('#login-type').text('Register');
+            }); 
+
+            // cancel out of registration
+            $('#site-sign-up-cancel').button().click(function(e){
+                e.preventDefault();
+                register = false;
+                $('#site-sign-up-password-repeat-row').hide();
+                $('#site-sign-up').show();
+                $(this).hide();                
+                $('#login-type').text('Sign In');
+                $('#site-sign-in-form').validate().resetForm();
+            }); 
+            
         
         });
         
@@ -95,41 +151,41 @@
 </script>
 
 <section>
-    <div style="font-size: 12px; margin: 0 auto; margin-top: 100px; width: 50%;">
-
-        <div style="float: left;">
-            <form id="site-sign-in-form"  action="">
-                <div>Sign In</div>
-                <div style="margin-top: 3px;">
-                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="site-sign-in-email" name="site-sign-in-email" class="required" />
-                </div>
-                <div style="margin-top: 3px;">
-                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="site-sign-in-password" name="site-sign-in-password" class="required" />
-                </div>
-                <div style="margin-top: 10px; text-align: center;">
-                    <button id="site-sign-in" name="" style="width: 125px;">Submit</button>
-                </div>
-            </form>
-        </div>
-        <div style="float: left; border-left: 3px solid #465a9b; margin-left: 15px; padding-left: 15px;">
-            <form>
-                <div>Sign Up</div>
-                <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">User Name:</label><input type="text" id="site-sign-up-email" name="site-sign-up-email" class="required" />
-                </div>
-                <div style="margin-top:3px;">
-                    <label for="" style="display: inline-block; width:75px;">Password:</label><input type="password" id="site-sign-up-password" name="site-sign-up-password" class="required" />
-                </div>
-                <div style="margin-top: 10px; text-align: center;">
-                    <button id="site-sign-up" name="" style="width: 125px;">Submit</button>
-                </div>                
-            </form>
-        </div>            
+    <div style="border:0px solid #333; font-size: 12px; margin: 0 auto; margin-top: 100px;  margin-bottom: 100px; width: 50%;">
         
+        <form id="site-sign-in-form">
+            <table width="50%" style="margin: 0 auto;">
+                <tr>
+                    <td colspan="2" align="left">
+                        <div class="site-label-02" id="login-type">Sign In</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><div class="site-label-01">Email:</div></td>
+                    <td><input type="text" id="site-sign-in-email" name="site-sign-in-email" class="required" /></td>
+                </tr>
+                <tr>
+                    <td><div class="site-label-01">Password:</div></td>
+                    <td><input type="password" id="site-sign-in-password" name="site-sign-in-password" class="required" /></td>
+                </tr>
+                <tr id="site-sign-up-password-repeat-row" style="display: none;">
+                    <td><div class="site-label-01">Password (Repeat):</div></td>
+                    <td><input type="password" id="site-sign-up-password-repeat" name="site-sign-up-password-repeat" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button id="site-sign-in" name="" style="width: 100px;">Submit</button>
+                        <button id="site-sign-up" name="" style="width: 100px;">Register</button>
+                        <button id="site-sign-up-cancel" name="" style="display: none; width: 100px;">Cancel</button>
+                    </td>
+                </tr>
+            </table>            
+        </form>
+
     </div>
-    <div style="clear: both;margin-bottom: 100px;"></div>
-    <div style="margin-top: 3px; display: none; text-align: center; padding: 5px; width: 30%; margin: 0 auto; margin-bottom: 20px;" class="error" id="login-error">
+    
+    <div style="display: none; padding: 5px; width: 50%; margin: 0 auto; margin-bottom: 20px; text-align: center;" id="login-error" class="error" >
         <div id="login-error-message"></div>
-        <div id="login-error-code"></div>
+        <div id="login-error-code"></div>            
     </div>
 </section>
