@@ -42,6 +42,12 @@ class RidesController extends Zend_Controller_Action {
         $query .= "where id = $user_id;";        
         $data["user"] = $mapper->getCustomSelect($query);
         
+        // equipment
+        $query = "select a.* ";
+        $query .= "from equipment a ";
+        $query .= "where a.user_id = $user_id;";        
+        $data["equipment"] = $mapper->getCustomSelect($query);        
+        
         // friends
         $query = "select a.*, ";
         $query .= "(select first_name from users where id = a.friend_id) as 'first_name', ";
@@ -111,6 +117,10 @@ class RidesController extends Zend_Controller_Action {
         $styles = explode('|', $config->codes->styles);
         $selects["styles"] = $styles;
         
+        // viewable
+        $viewable = explode('|', $config->codes->viewable);
+        $selects["viewable"] = $viewable;
+                       
         // ride types
         $ridetypes = explode('|', $config->codes->rides->types);
         $selects["ridetypes"] = $ridetypes;

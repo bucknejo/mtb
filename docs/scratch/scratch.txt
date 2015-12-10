@@ -426,3 +426,13 @@ avarts
 resources.frontController.plugins.token.generate = "Application_Plugin_CSRFTokenGenerate"
 
         //$ajaxContext->setAutoJsonSerialization(false);
+
+        /*
+        var row = $('<tr>');
+        var a1 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        var c1 = $('<td>').append($('<div class="label-02">').append('First Name:'));
+        var c2 = $('<td colspan="5">').append(user_first_name);
+        var a2 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
+        row.append(a1).append(c1).append(c2).append(a2);
+        table.append(row);
+        */

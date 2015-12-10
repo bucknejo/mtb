@@ -1117,7 +1117,9 @@
     
     function editUserInfoForm(instance, data) {
         
-        var div = $('<div>');
+        var user = data.user[0];        
+        
+        var div = $('<div style="border: 0px dotted red;">');
         
         var close = $('<div style="float:right;font-size:20px;margin:0px 10px;border:0px dotted green;" class="clickable base">').append('&#10799;').click(function(){
             $('#edit-user-info').remove();
@@ -1127,10 +1129,15 @@
         
         div.append($('<div class="ride-management-segment-header" style="clear:both;">').append('Profile'));
         div.append($('<hr style="border:0;clear:both;height:1px;background:#333;margin-top:10px;" />'));
-                
+        
+        var divw = $('<div style="text-align: center;">');
+        var divl = $('<div style="display:inline-block; vertical-align: top; border: 0px solid orange;">');
+        var divr = $('<div style="display:inline-block; vertical-align: top; margin-left: 10px; border: 0px solid purple;">');
+        
+        // build left side
         var form = $('<form id="'+instance.id+'-edit-user-info-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');
                 
-        var table = $('<table class="ride-management user" width="100%" align="center">');
+        var table = $('<table class="ride-management user" width="50%">');
         
         var user_first_name = $('<input type="text" id="'+instance.id+'-user_first_name" name="'+instance.id+'-user_first_name" class="required">');
         var user_last_name = $('<input type="text" id="'+instance.id+'-user_last_name" name="'+instance.id+'-user_last_name" class="required">');
@@ -1138,7 +1145,8 @@
         
         var user_skill = $('<select id="'+instance.id+'-user_skill" name="'+instance.id+'-user_skill" class="small">');
         var user_experience = $('<select id="'+instance.id+'-user_experience" name="'+instance.id+'-user_experience" class="small">');
-        var user_style = $('<select id="'+instance.id+'-user_style" name="'+instance.id+'-user_style" class="small" style="width:112px;">');
+        var user_style = $('<select id="'+instance.id+'-user_style" name="'+instance.id+'-user_style" class="small">');
+        var user_viewable = $('<select id="'+instance.id+'-user_viewable" name="'+instance.id+'-user_viewable" class="small">');
                 
         var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">Update</button>').button({
             icons: {
@@ -1203,26 +1211,24 @@
             $('#edit-user-info').remove();
         });                
         
-        // row 1
+        // row 1       
         var row = $('<tr>');
-        var a1 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
         var c1 = $('<td>').append($('<div class="label-02">').append('First Name:'));
-        var c2 = $('<td colspan="5">').append(user_first_name);
-        var a2 = $('<td rowspan="5" valign="middle">').append($('<div class="user-edit-ad alley">'));
-        row.append(a1).append(c1).append(c2).append(a2);
+        var c2 = $('<td>').append(user_first_name);
+        row.append(c1).append(c2);
         table.append(row);
-        
+                
         // row 2
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Last Name:'));
-        c2 = $('<td colspan="5">').append(user_last_name);
+        c2 = $('<td>').append(user_last_name);
         row.append(c1).append(c2);
         table.append(row);
         
         // row 3
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Email:'));
-        c2 = $('<td colspan="5">').append(user_email);
+        c2 = $('<td>').append(user_email);
         row.append(c1).append(c2);
         table.append(row);
         
@@ -1230,30 +1236,41 @@
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Skill:'));
         c2 = $('<td>').append(user_skill);
-        var c3 = $('<td>').append($('<div class="label-02">').append('Experience:'));
-        var c4 = $('<td>').append(user_experience);
-        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
-        var c6 = $('<td>').append(user_style);
-        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        row.append(c1).append(c2);
         table.append(row);
-                
+
         // row 4
         row = $('<tr>');
-        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+        c1 = $('<td>').append($('<div class="label-02">').append('Experience:'));
+        c2 = $('<td>').append(user_experience);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 5
+        row = $('<tr>');        
+        c1 = $('<td>').append($('<div class="label-02">').append('Style:'));
+        c2 = $('<td>').append(user_style);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 6
+        row = $('<tr>');        
+        c1 = $('<td>').append($('<div class="label-02">').append('Viewable:'));
+        c2 = $('<td>').append(user_viewable);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+                
+        // row 7
+        row = $('<tr>');
+        c1 = $('<td colspan="2" align="center">').append(update).append(cancel);
         row.append(c1);
         table.append(row);        
         
-        // add ad div to form top
-        var ad = $('<div class="user-edit-ad top">');
-        form.append(ad);
-        
         // add middle components to form
         form.append(table);                  
-        
-        // add ad div to form bottom
-        ad = $('<div class="user-edit-ad bottom">');
-        form.append(ad);
-        
+        divl.append(form);
+                
         // selects
         $.each(getOptions(instance, data.selects.skills), function(index, option){
             user_skill.append(option);
@@ -1267,11 +1284,76 @@
             user_style.append(option);
         });
         
+        $.each(getOptions(instance, data.selects.viewable), function(index, option){
+            user_viewable.append(option);
+        });
+        
         user_skill.selectmenu();
         user_experience.selectmenu();
         user_style.selectmenu();
+        user_viewable.selectmenu();
+        
+        // build right side
+        var avatar = $('<div style="border:0px solid #444; float: left; height: 150px;">');
+        var image = $('<img />', {
+            id: '',
+            src: '/images/logo/rs-icon-250x.jpg',
+            alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
+            name: '',
+            class: '',
+            height: '150',
+            width: '150'            
+        });
+        
+        avatar.append(image);
+        
+        var equipment = $('<div style="border:0px solid #555; float: left; height: 150px; text-align: left; margin-top: 10px; margin-left: 50px;">');
+        
+        var stuff = data.equipment;
+        
+        if (isArray(stuff)) {
+            equipment.append($('<div>').append('Equipment'));
+            var ul = $('<ul style="list-style-type: none; margin: 0; padding: 0;">');
+            for (var i=0; i < stuff.length; i++) {
+                var thing = stuff[i];
+                var li = $('<li style="margin: 0; padding: 0;">');
+                li.append($('<div class="equipment-list-label-01">').append(thing.name));
+                li.append($('<div class="equipment-list-label-01">').append(thing.make));
+                //li.append($('<div class="equipment-list-label-01">').append(thing.model));
+                //li.append($('<div class="equipment-list-label-01">').append());
+                ul.append(li);
+            }
+            equipment.append(ul);
+        }
+                
+        var photos = $('<div style="border:0px solid #333; clear: both;">');
+        
+        for (var j=0; j < 5; j++) {
+            var img = $('<img />', {
+                id: '',
+                src: '/images/logo/rs-icon-250x.jpg',
+                alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
+                name: '',
+                class: '',
+                height: '50',
+                width: '50'            
+            });
+            photos.append(img);
+        }
+        
+        divr.append(avatar);
+        divr.append(equipment);
+        divr.append(photos);
+        
+        divw.append(divl).append(divr);
        
-        div.append(form);
+        // add ad div to form top
+        var ad = $('<div class="user-edit-ad top">');
+        div.append(ad);
+        div.append(divw);
+        // add ad div to form bottom
+        ad = $('<div class="user-edit-ad bottom">');
+        div.append(ad);
         
         // friends management
         div.append(friendManagement(instance, data));

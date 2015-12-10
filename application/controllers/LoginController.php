@@ -117,6 +117,9 @@ class LoginController extends Zend_Controller_Action
         $data = array();
         
         try {
+            
+            $salt = $this->_helper->utilities->create_salt();
+            $hash = $this->_helper->utilities->create_hash($password, $salt);
         
             $query = "select * from users where email='$email';";
             $users = $mapper->getCustomSelect($query);
