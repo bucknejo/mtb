@@ -436,3 +436,5 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
         row.append(a1).append(c1).append(c2).append(a2);
         table.append(row);
         */
+        
+        //$this->_helper->viewRenderer->setNoRender(true);

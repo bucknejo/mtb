@@ -15,8 +15,8 @@ class Application_Plugin_Lib
         $link = "<li><a href=\"/login\" class=\"\" >Login</a></li>";
                 
         if ($auth->hasIdentity()) {
-            $link .= "<li><a href=\"/rides\" class=\"\" >Dashboard</a></li>";
-            $link = "<li><a href=\"/login/logout\" class=\"\" >Logout</a></li>";
+            $link = "<li><a href=\"/rides\" class=\"\" >Dashboard</a></li>";
+            $link .= "<li><a href=\"/login/logout\" class=\"\" >Logout</a></li>";
         }        
         
         return $link;

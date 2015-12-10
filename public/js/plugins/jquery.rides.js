@@ -1137,7 +1137,7 @@
         // build left side
         var form = $('<form id="'+instance.id+'-edit-user-info-form" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');
                 
-        var table = $('<table class="ride-management user" width="50%">');
+        var table = $('<table class="ride-management user" style="text-align: left;" width="50%">');
         
         var user_first_name = $('<input type="text" id="'+instance.id+'-user_first_name" name="'+instance.id+'-user_first_name" class="required">');
         var user_last_name = $('<input type="text" id="'+instance.id+'-user_last_name" name="'+instance.id+'-user_last_name" class="required">');
@@ -1294,40 +1294,43 @@
         user_viewable.selectmenu();
         
         // build right side
-        var avatar = $('<div style="border:0px solid #444; float: left; height: 150px;">');
+        var avatar = $('<div style="border:0px solid #444; float: left; height: 100px; text-align: left; margin-top: 2px;">');
+        avatar.append($('<div style="margin-left: 5px;">').append('<u>Avatar</u>'));
         var image = $('<img />', {
             id: '',
             src: '/images/logo/rs-icon-250x.jpg',
             alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
             name: '',
             class: '',
-            height: '150',
-            width: '150'            
+            height: '75',
+            width: '75'            
         });
         
         avatar.append(image);
         
-        var equipment = $('<div style="border:0px solid #555; float: left; height: 150px; text-align: left; margin-top: 10px; margin-left: 50px;">');
+        var equipment = $('<div style="border:0px solid #555; float: left; height: 100px; text-align: left; margin-top: 2px; margin-left: 50px;">');
         
         var stuff = data.equipment;
         
         if (isArray(stuff)) {
-            equipment.append($('<div>').append('Equipment'));
+            equipment.append($('<div>').append('<u>Equipment</u>'));
             var ul = $('<ul style="list-style-type: none; margin: 0; padding: 0;">');
             for (var i=0; i < stuff.length; i++) {
                 var thing = stuff[i];
                 var li = $('<li style="margin: 0; padding: 0;">');
                 li.append($('<div class="equipment-list-label-01">').append(thing.name));
                 li.append($('<div class="equipment-list-label-01">').append(thing.make));
-                //li.append($('<div class="equipment-list-label-01">').append(thing.model));
+                li.append($('<div class="equipment-list-label-02">').append(thing.model));
                 //li.append($('<div class="equipment-list-label-01">').append());
                 ul.append(li);
             }
             equipment.append(ul);
         }
                 
-        var photos = $('<div style="border:0px solid #333; clear: both;">');
+        var photos = $('<div style="border:0px solid #333; clear: both;">');        
+        photos.mtbCarousel({});
         
+        /*
         for (var j=0; j < 5; j++) {
             var img = $('<img />', {
                 id: '',
@@ -1340,6 +1343,7 @@
             });
             photos.append(img);
         }
+        */
         
         divr.append(avatar);
         divr.append(equipment);
