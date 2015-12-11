@@ -185,14 +185,45 @@
             for (var j=0; j < photos.length; j++) {
                 var photo = photos[j];
                 var row = $('<tr>');
+                
+                var c1 = $('<td>');
+                var c2 = $('<td>');
+                var c3 = $('<td>');
+                var c4 = $('<td>');
+                
                 var img = $('<img />', {
                     alt: photo.alt,
                     src: data.path + photo.url,
                     height: '100',
                     width: '150'
                 });
-                row.append($('<td>').append(img));
-                row.append($('<td>').append(photo.description));
+                c1.append(img);
+                
+                var details = $('<div>');
+                details.append('Date Created: ' + photo.date_created + '<br />');
+                details.append('Last Updated: ' + photo.last_updated + '<br />');
+                c2.append(details);
+                                
+                var description = $('<div>');
+                description.append(photo.description);
+                c3.append(description);
+                
+                var operations = $('<div>');
+                var edit = $('<button>').button({
+                    text: 'Edit'
+                }).click(function() {
+                    
+                });
+                var del = $('<button>').button({
+                    text: 'Remove'
+                }).click(function(){
+                    
+                });
+                operations.append(edit);
+                operations.append(del);
+                c4.append(operations);
+                
+                row.append(c1).append(c2).append(c3).append(c4);
                 table.append(row);
             }
             div.append(table);
