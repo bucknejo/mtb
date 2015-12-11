@@ -13,7 +13,6 @@
         this.options = $.extend({}, defaults, options);
         this.item = $(item);
         this.id = this.item.attr('id');
-        this.div = $('<div id="' + this.id + '-tablespace">');
         this.init(this, this.options);
     }
     
@@ -76,8 +75,10 @@
     function build(instance) {
         
         var carousel = $('<div id="'+instance.id+'-carousel-container" class="mtb-carousel-container">');
-        carousel.append($('<div style="text-align:left; margin: 0 0 5px 0px;">').append('<u>Photos</u>'));
+        var header = $('<div class="mtb-carousel-header">').append('Photos');
         
+        carousel.append(header);
+                
         var request = {
             url: 'photos/get',
             type: 'get',
@@ -94,6 +95,10 @@
                 
                 if (isArray(data.photos)) {
                     
+                    header.click(function(){
+                        photoManagement(instance, data);
+                    });
+                                        
                     for (var i=0; i < data.photos.length; i++) {
                         var photo = data.photos[i];
                         var li = $('<li>');
@@ -161,6 +166,48 @@
         server(request, instance);
         
         instance.item.empty().append(carousel);
+    }
+    
+    function photoManagement(instance, data) {
+        
+        var photos = data.photos;
+        
+        var config = {
+            height: 500,
+            width: 800
+        };
+    
+        var div = $('<div>');
+        
+        if (isArray(photos)) {
+            var table = $('<table class="mtb-carousel-photo-management">');
+            
+            for (var j=0; j < photos.length; j++) {
+                var photo = photos[j];
+                var row = $('<tr>');
+                var img = $('<img />', {
+                    alt: photo.alt,
+                    src: data.path + photo.url,
+                    height: '100',
+                    width: '150'
+                });
+                row.append($('<td>').append(img));
+                row.append($('<td>').append(photo.description));
+                table.append(row);
+            }
+            div.append(table);
+        }
+        
+        div.dialog({
+            autoOpen: true,
+            height: config.height,
+            title: 'Photos',
+            width: config.width,
+            close: function() {
+                $(this).destoy();
+            }
+        });
+                
     }
     
     $.fn.mtbCarousel = function(options) {

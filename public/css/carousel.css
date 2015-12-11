@@ -1,5 +1,7 @@
 .mtb-carousel-container {border: 0px dotted red;}
 
+.mtb-carousel-header {text-align:left; margin: 0 0 5px 0px; cursor: pointer; cursor: hand; text-decoration: underline;}
+
 .mtb-carousel-inner {
     float:left; /* important for inline positioning */
     width:480px; /* important (this width = width of list item(including margin) * items shown */
@@ -76,3 +78,9 @@
     cursor: pointer;
     cursor: hand;    
 }
+
+table.mtb-carousel-photo-management {}
+table.mtb-carousel-photo-management {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
+table.mtb-carousel-photo-management tr {border: 0px solid #333;}
+table.mtb-carousel-photo-management tr td {border: 0px solid #333;padding: 2px 2px;}
+table.mtb-carousel-photo-management tr span.label {color: #333; font-weight: bold; padding-right: 3px;}
