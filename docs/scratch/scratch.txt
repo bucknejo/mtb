@@ -438,3 +438,239 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
         */
         
         //$this->_helper->viewRenderer->setNoRender(true);
+
+            // bind event to particular cell
+            $('.owner').click(function() {
+                var data = $(this).data('data');
+                edit(instance, Models.users(), data.id, 'Ride Owner', false);
+            });
+
+
+    function edit(instance, model, id, title, display) {
+        
+        var div = $('<div class="rm-form">');
+        
+        server({
+            callback: function(data, instance) {
+                
+                if (model) {
+
+                    if (isArray(model.columns)) {
+
+                        var form = $('<form id="'+instance.id+'-table-'+model.name+'">');
+
+                        var t = $('<table width="100%">');
+                        
+                        var elements = [];
+
+                        for (var i=0; i < model.columns.length; i++) {
+                            var column = model.columns[i];
+                            var r = $('<tr>');
+                            var l = $('<td>');
+                            var c = $('<td>');
+                            var e = element(instance, column, model, data);
+                            
+                            elements.push(e);
+                            
+                            l.append(column.description + ':');
+                            c.append(e);
+                            r.append(l).append(c);
+
+                            // disable field if we only want to display
+                            if (display) e.prop('disabled', display);
+                            // hide entire row if the column model calls for it
+                            if (column.hide) {
+                                r.css({"display":"none"});
+                            }
+                            
+                            t.append(r);                                        
+                        }
+                        
+                        // form validation stuff
+                        
+                        // add buttons
+                        if (!display) {
+
+                            var r = $('<tr>');
+                            var c = $('<td align="center" colspan="2" style="padding-top:15px;">');
+                            var submit = $('<button>Submit</button>').button().click(function(event){
+                                
+                                event.preventDefault();
+
+                                var post = {};
+                                $.each(elements, function(){
+                                    var e = $(this);
+                                    var c = $(this).data('column');
+                                    var obj = {};
+                                    obj[c.name] = e.val();
+                                    $.extend(post, obj);
+                                });
+
+                                $.extend(post, {id: id, process: 'POST', oper: 'UPDATE'});
+                                
+                                server({
+                                    callback: function(data, instance){
+                                        log(instance, 'edit', 'post', data);
+                                        if (data && isArray(data)) {
+                                            var row = data[0];
+                                            if (row.id > 0) {
+                                                div.dialog('close');
+                                                build(instance);                                                
+                                            }
+                                        }
+                                    },
+                                    data: post,
+                                    url: model.urls.get,
+                                    type: 'post'
+                                }, instance);
+                                
+                                
+                            });
+                            var cancel = $('<button>Cancel</button>').button().click(function(event){
+                                event.preventDefault();
+                                div.dialog('close');
+                            });
+
+                            c.append(submit).append(cancel);
+                            r.append(c);
+                            t.append(r);
+                            
+                        }
+                        
+                        form.append(t);                
+
+                    }
+
+                }
+
+                div.append(form);
+
+                div.dialog({
+                    autoOpen: true,
+                    close: function() {
+                        $(this).dialog('destroy');
+                    },
+                    modal: true,
+                    open: function() {
+                        $('.rm-datepicker').datepicker({
+                                    changeMonth: true,
+                                    changeYear: true,
+                                    dateFormat: 'mm/dd/yy',
+                                    showOn: 'button',
+                                    buttonImage: '/images/common/calendar-icon.png',
+                                    buttonImageOnly: true,
+                                    buttonText: 'Select Date'
+                                }); 
+                    },
+                    title: (title) ? title : model.name,
+                    width: 600
+
+                });
+
+                return div;                
+                
+            },
+            data: {id: id, process: 'GET-ONE'},
+            url: model.url,
+            type: 'get'
+        }, instance);                
+        
+    }
+
+    
+    function element(instance, column, model, data) {
+        
+        if (!column && !model) return $('<div>');
+        
+        var e;
+        var m = function(instance, column, model) {
+            return instance.id + '-' + model.name + '-' + column.name;
+        };
+        
+        switch (column.type) {
+
+            case 'date':
+                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" class="rm-datepicker">');
+                break;
+            case 'password':
+                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" type="password" maxlength="'+column.length+'">');
+                break;
+            case 'text':
+                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" maxlength="'+column.length+'">').val(column.default);
+                break;
+            case 'select':
+                e = $('<select id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" maxlength="'+column.length+'">').val(column.default);                    
+                if (column.options && isArray(column.options)) {
+                    for (var i=0; i < column.options.length; i++) {
+                        var option = column.options[i];
+                        var key = option.key;
+                        var value = option.value;
+                        var o = $('<option>', {value: key}).text(value);
+                        e.append(o);
+                    }
+                }
+                break;
+            default:
+                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'">').val(column.default);
+                break;
+
+        }            
+        
+        if (e && column.properties) {
+            
+            var props = column.properties;
+            for (var name in props) {
+                e.prop(name, props[name]);
+            }
+                        
+        }
+                
+        if (e && isArray(data)) {
+            e.val(data[0][column.name]);
+            e.data('column',column);
+        }
+        
+        return e;
+        
+    }
+
+
+        $process = $this->_getParam("process");
+        $oper = $this->_getParam("oper");
+        
+        switch ($process) {
+            case "GET-ONE":
+                $data = $mapper->getItemById($table_name, $id);
+                break;
+            case "POST":
+                //$date_created = $this->_getParam("date_created");
+                //$last_updated = $this->_getParam("last_updated");
+                //$active = $this->_getParam("active");
+                $user_name_internal = $this->_getParam("user_name_internal");
+                $user_name_external = $this->_getParam("user_name_external");
+                $first_name = $this->_getParam("first_name");
+                $last_name = $this->_getParam("last_name");
+                $password = $this->_getParam("password");
+                $role_id = $this->_getParam("role_id");
+                $email = $this->_getParam("email");
+                $data = array(
+                    "user_name_internal" => $user_name_internal,
+                    "user_name_external" => $user_name_external,
+                    "first_name" => $first_name,
+                    "last_name" => $last_name,
+                    "password" => $password,
+                    "role_id" => $role_id,
+                    "email" => $email                    
+                );
+                
+                if ($oper == "UPDATE") {
+                    $i = $mapper->updateItem($table_name, $data, $id);
+                    if ($i > 0) {
+                        $data = $mapper->getItemById($table_name, $id);
+                    }
+                }
+                break;
+            default:
+                $data = array();
+                break;
+        }

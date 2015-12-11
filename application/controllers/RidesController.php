@@ -110,6 +110,10 @@ class RidesController extends Zend_Controller_Action {
         $selects["public"] = $public;
         
         // skills
+        $gender = explode('|', $config->codes->gender);
+        $selects["gender"] = $gender;
+        
+        // skills
         $skills = explode('|', $config->codes->skills);
         $selects["skills"] = $skills;
         

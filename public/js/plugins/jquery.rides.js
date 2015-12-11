@@ -2,6 +2,9 @@
     
     var defaults = {
         debug: true,
+        exception: {
+            message: 'An exception has occurred while processing your request.  A log of the event has been generated and sent to support for investigation and resolution.'
+        },
         name: 'Ride Management',
         states: {},
         token: null,
@@ -70,6 +73,45 @@
                 }
             }
             
+        });
+        
+    }
+    
+    function display(instance, config) {
+        
+        var d = $('<div>');
+        
+        var message = $('<div>');
+        
+        if (!config.success) {
+            message.append($('<div class="error" style="padding: 5px;">').append(instance.options.exception.message));
+
+            message.append("<br />Message: " + ((config.message) ? config.message : 'Exception'));
+            message.append("<br />Code: " + ((config.code) ? config.code : ''));            
+        } else {
+            message.append($('<div>').append("Success!"));
+        }
+        
+        d.append(message);
+        
+        d.dialog({
+            autoOpen: true,
+            buttons: [
+                {
+                    text: 'Ok',
+                    click: function() {
+                        $(this).dialog('close');
+                    },
+                    style: 'font-size: 11px;'
+                }
+            ],
+            close: function() {
+                $(this).dialog('destroy');  
+            },
+            height: (config.height) ? config.height : 275,
+            width: (config.width) ? config.width : 600,
+            modal: (config.modal) ? config.modal : false,
+            title: (config.title) ? config.title : 'Error'
         });
         
     }
@@ -831,13 +873,7 @@
             }
                                     
             div.append(table);  
-            
-            // bind event to particular cell
-            $('.owner').click(function() {
-                var data = $(this).data('data');
-                edit(instance, Models.users(), data.id, 'Ride Owner', false);
-            });
-            
+                        
         }
         
         return div;
@@ -998,21 +1034,6 @@
         c6 = $('<td>').append(ride_drop);
         row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
         table.append(row);
-
-        /*
-        row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Owner:'));
-        c2 = $('<td>').append(ride_owner);
-        c3 = $('<td>').append($('<div class="label-02">').append('Status:'));
-        c4 = $('<td>').append(ride_status);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);
-        row = $('<tr>');
-        c1 = $('<td>').append($('<span class="label-02">').append('State:'));
-        c2 = $('<td>').append(ride_states);
-        row.append(c1).append(c2).append(c3).append(c4);                       
-        table.append(row);  
-        */
                                 
         // row 8
         row = $('<tr>');
@@ -1141,8 +1162,9 @@
         
         var user_first_name = $('<input type="text" id="'+instance.id+'-user_first_name" name="'+instance.id+'-user_first_name" class="required">');
         var user_last_name = $('<input type="text" id="'+instance.id+'-user_last_name" name="'+instance.id+'-user_last_name" class="required">');
-        var user_email = $('<input type="text" id="'+instance.id+'-user_email" name="'+instance.id+'-user_email" class="required email">');
+        var user_email = $('<input type="text" id="'+instance.id+'-user_email" name="'+instance.id+'-user_email" class="required email">').prop('disabled', true);
         
+        var user_gender = $('<select id="'+instance.id+'-user_gender" name="'+instance.id+'-user_gender" class="small">');
         var user_skill = $('<select id="'+instance.id+'-user_skill" name="'+instance.id+'-user_skill" class="small">');
         var user_experience = $('<select id="'+instance.id+'-user_experience" name="'+instance.id+'-user_experience" class="small">');
         var user_style = $('<select id="'+instance.id+'-user_style" name="'+instance.id+'-user_style" class="small">');
@@ -1165,20 +1187,57 @@
                 ignore: '',
                 submitHandler: function(f) {
                     
-                    var user = {
+                    var update = {
                         first_name: $('#'+instance.id+'-user_first_name').val(),
                         last_name: $('#'+instance.id+'-user_last_name').val(),
                         email: $('#'+instance.id+'-user_email').val(),
+                        gender: $('#'+instance.id+'-user_gender').val(),
                         skill: $('#'+instance.id+'-user_skill').val(),
                         experience: $('#'+instance.id+'-user_experience').val(),
-                        style: $('#'+instance.id+'-user_style').val()                        
+                        type: $('#'+instance.id+'-user_style').val(),
+                        viewable: $('#'+instance.id+'-user_viewable').val()
                     };
                     
-                    var post = $.extend(user, instance.options, {action: 'add'});
+                    var post = $.extend(update, instance.options, {id: user.id});
                     
                     log(instance, 'editUserInfoForm', 'post', post);
                     server({
                         callback: function(data, instance) {
+                            
+                            log(instance, instance.options.name, 'update user', data);
+                            
+                            if (data.success) {
+                                
+                                if (isArray(data.user)) {
+
+                                    var u = data.user[0];
+
+                                    user_first_name.val(u.first_name);
+                                    user_last_name.val(u.last_name);
+                                    user_email.val(u.email);
+                                    user_gender.val(u.gender);
+                                    user_gender.selectmenu("refresh");
+                                    user_skill.val(u.skill);
+                                    user_skill.selectmenu("refresh");
+                                    user_experience.val(u.experience);
+                                    user_experience.selectmenu("refresh");
+                                    user_style.val(u.type);
+                                    user_style.selectmenu("refresh");
+                                    user_viewable.val(u.viewable);
+                                    user_viewable.selectmenu("refresh");
+                                    
+                                    var config = $.extend(data, {height: 150, title: 'Success'});
+                                    display(instance, config);
+                                    
+                                }
+                                                                
+                            } else {
+
+                                var config = $.extend(data, {title: 'Error'});
+                                display(instance, config);
+                                
+                            }
+                                                        
                             
                         },
                         data: post,
@@ -1234,34 +1293,40 @@
         
         // row 3
         row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Gender:'));
+        c2 = $('<td>').append(user_gender);
+        row.append(c1).append(c2);
+        table.append(row);
+
+        // row 4
+        row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Skill:'));
         c2 = $('<td>').append(user_skill);
         row.append(c1).append(c2);
         table.append(row);
 
-        // row 4
+        // row 5
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Experience:'));
         c2 = $('<td>').append(user_experience);
         row.append(c1).append(c2);
         table.append(row);
         
-        // row 5
+        // row 6
         row = $('<tr>');        
         c1 = $('<td>').append($('<div class="label-02">').append('Style:'));
         c2 = $('<td>').append(user_style);
         row.append(c1).append(c2);
         table.append(row);
         
-        // row 6
+        // row 7
         row = $('<tr>');        
-        c1 = $('<td>').append($('<div class="label-02">').append('Viewable:'));
+        c1 = $('<td>').append($('<div class="label-02">').append('Public:'));
         c2 = $('<td>').append(user_viewable);
         row.append(c1).append(c2);
         table.append(row);
-        
-                
-        // row 7
+                        
+        // row 8
         row = $('<tr>');
         c1 = $('<td colspan="2" align="center">').append(update).append(cancel);
         row.append(c1);
@@ -1288,13 +1353,34 @@
             user_viewable.append(option);
         });
         
+        $.each(getOptions(instance, data.selects.gender), function(index, option){
+            user_gender.append(option);
+        });
+        
+        user_gender.selectmenu();
         user_skill.selectmenu();
         user_experience.selectmenu();
         user_style.selectmenu();
         user_viewable.selectmenu();
         
+        // seed values
+        user_first_name.val(user.first_name);
+        user_last_name.val(user.last_name);
+        user_email.val(user.email);
+        user_gender.val(user.gender);
+        user_gender.selectmenu("refresh");
+        user_skill.val(user.skill);
+        user_skill.selectmenu("refresh");
+        user_gender.selectmenu("refresh");
+        user_experience.val(user.experience);
+        user_experience.selectmenu("refresh");
+        user_style.val(user.type);
+        user_style.selectmenu("refresh");
+        user_viewable.val(user.viewable);
+        user_viewable.selectmenu("refresh");
+        
         // build right side
-        var avatar = $('<div style="border:0px solid #444; float: left; height: 100px; text-align: left; margin-top: 2px;">');
+        var avatar = $('<div style="border:0px solid #444; float: left; height: 135px; text-align: left; margin-top: 2px;">');
         avatar.append($('<div style="margin-left: 5px;">').append('<u>Avatar</u>'));
         var image = $('<img />', {
             id: '',
@@ -1302,13 +1388,13 @@
             alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
             name: '',
             class: '',
-            height: '75',
-            width: '75'            
+            height: '100',
+            width: '100'            
         });
         
         avatar.append(image);
         
-        var equipment = $('<div style="border:0px solid #555; float: left; height: 100px; text-align: left; margin-top: 2px; margin-left: 50px;">');
+        var equipment = $('<div style="border:0px solid #555; float: left; height: 135px; text-align: left; margin-top: 2px; margin-left: 50px;">');
         
         var stuff = data.equipment;
         
@@ -1814,194 +1900,7 @@
         return options;
         
     }
-    
-    function edit(instance, model, id, title, display) {
         
-        var div = $('<div class="rm-form">');
-        
-        server({
-            callback: function(data, instance) {
-                
-                if (model) {
-
-                    if (isArray(model.columns)) {
-
-                        var form = $('<form id="'+instance.id+'-table-'+model.name+'">');
-
-                        var t = $('<table width="100%">');
-                        
-                        var elements = [];
-
-                        for (var i=0; i < model.columns.length; i++) {
-                            var column = model.columns[i];
-                            var r = $('<tr>');
-                            var l = $('<td>');
-                            var c = $('<td>');
-                            var e = element(instance, column, model, data);
-                            
-                            elements.push(e);
-                            
-                            l.append(column.description + ':');
-                            c.append(e);
-                            r.append(l).append(c);
-
-                            // disable field if we only want to display
-                            if (display) e.prop('disabled', display);
-                            // hide entire row if the column model calls for it
-                            if (column.hide) {
-                                r.css({"display":"none"});
-                            }
-                            
-                            t.append(r);                                        
-                        }
-                        
-                        // form validation stuff
-                        
-                        // add buttons
-                        if (!display) {
-
-                            var r = $('<tr>');
-                            var c = $('<td align="center" colspan="2" style="padding-top:15px;">');
-                            var submit = $('<button>Submit</button>').button().click(function(event){
-                                
-                                event.preventDefault();
-
-                                var post = {};
-                                $.each(elements, function(){
-                                    var e = $(this);
-                                    var c = $(this).data('column');
-                                    var obj = {};
-                                    obj[c.name] = e.val();
-                                    $.extend(post, obj);
-                                });
-
-                                $.extend(post, {id: id, process: 'POST', oper: 'UPDATE'});
-                                
-                                server({
-                                    callback: function(data, instance){
-                                        log(instance, 'edit', 'post', data);
-                                        if (data && isArray(data)) {
-                                            var row = data[0];
-                                            if (row.id > 0) {
-                                                div.dialog('close');
-                                                build(instance);                                                
-                                            }
-                                        }
-                                    },
-                                    data: post,
-                                    url: model.urls.get,
-                                    type: 'post'
-                                }, instance);
-                                
-                                
-                            });
-                            var cancel = $('<button>Cancel</button>').button().click(function(event){
-                                event.preventDefault();
-                                div.dialog('close');
-                            });
-
-                            c.append(submit).append(cancel);
-                            r.append(c);
-                            t.append(r);
-                            
-                        }
-                        
-                        form.append(t);                
-
-                    }
-
-                }
-
-                div.append(form);
-
-                div.dialog({
-                    autoOpen: true,
-                    close: function() {
-                        $(this).dialog('destroy');
-                    },
-                    modal: true,
-                    open: function() {
-                        $('.rm-datepicker').datepicker({
-                                    changeMonth: true,
-                                    changeYear: true,
-                                    dateFormat: 'mm/dd/yy',
-                                    showOn: 'button',
-                                    buttonImage: '/images/common/calendar-icon.png',
-                                    buttonImageOnly: true,
-                                    buttonText: 'Select Date'
-                                }); 
-                    },
-                    title: (title) ? title : model.name,
-                    width: 600
-
-                });
-
-                return div;                
-                
-            },
-            data: {id: id, process: 'GET-ONE'},
-            url: model.url,
-            type: 'get'
-        }, instance);                
-        
-    }
-    
-    function element(instance, column, model, data) {
-        
-        if (!column && !model) return $('<div>');
-        
-        var e;
-        var m = function(instance, column, model) {
-            return instance.id + '-' + model.name + '-' + column.name;
-        };
-        
-        switch (column.type) {
-
-            case 'date':
-                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" class="rm-datepicker">');
-                break;
-            case 'password':
-                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" type="password" maxlength="'+column.length+'">');
-                break;
-            case 'text':
-                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" maxlength="'+column.length+'">').val(column.default);
-                break;
-            case 'select':
-                e = $('<select id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'" maxlength="'+column.length+'">').val(column.default);                    
-                if (column.options && isArray(column.options)) {
-                    for (var i=0; i < column.options.length; i++) {
-                        var option = column.options[i];
-                        var key = option.key;
-                        var value = option.value;
-                        var o = $('<option>', {value: key}).text(value);
-                        e.append(o);
-                    }
-                }
-                break;
-            default:
-                e = $('<input id="'+m(instance, column, model)+'" name="'+m(instance, column, model)+'">').val(column.default);
-                break;
-
-        }            
-        
-        if (e && column.properties) {
-            
-            var props = column.properties;
-            for (var name in props) {
-                e.prop(name, props[name]);
-            }
-                        
-        }
-                
-        if (e && isArray(data)) {
-            e.val(data[0][column.name]);
-            e.data('column',column);
-        }
-        
-        return e;
-        
-    }
-    
     $.fn.rideManagement = function(options) {
         
         var args = Array.prototype.slice.call(arguments, 1);
