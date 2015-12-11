@@ -58,3 +58,21 @@
 }
 
 .mtb-carousel-scroll span:hover {color: #465a9b;}
+
+.mtb-carousel-lightbox {
+    position: absolute;
+    width: 620px;
+    height: 420px;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    margin: -210px 0 0 -310px;
+    border: 1px solid #465a9b;
+    background-color: #fff;
+    padding: 10px;
+}
+
+.mtb-carousel-lightbox img {
+    cursor: pointer;
+    cursor: hand;    
+}

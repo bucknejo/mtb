@@ -108,6 +108,24 @@
                         a.append(img);
                         li.append(a);
                         ul.append(li);
+                        
+                        a.click(function(){
+                            var i = $(this).find('img');
+                            var d = $('<div class="mtb-carousel-lightbox">');
+                            var p = $('<img />', {
+                                alt: i.prop('alt'),
+                                src: i.prop('src'),
+                                height: '400',
+                                width: '600'                                
+                            });
+                            d.append(p);
+                            $(document.body).append(d);
+                            
+                            d.click(function() {
+                                $(this).remove();
+                            });
+                        });
+                        
                     }
                     
                     m.append(ul);
@@ -136,7 +154,7 @@
                         ul.css({'left':'-'+instance.options.li.width+'px'});
                     });
                 });
-        
+                
             }
         };
         
