@@ -25,7 +25,7 @@ table.ride-management.group tr span.label {color: #333; font-weight: bold; paddi
 table.ride-management.group tr td span.content-green {color: green; padding-right: 3px;}
 table.ride-management.group tr td span.content-red {color: red; padding-right: 3px;}
 table.ride-management.group input[type="text"] {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
-table.ride-management.group select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.group select.small {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.group select.large {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 
 table.ride-management.group.detail {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}

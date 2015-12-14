@@ -674,3 +674,13 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
                 $data = array();
                 break;
         }
+
+        <!--
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>        
+        -->
+
+
+        <!--
+        <link href="/js/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css" type="text/css" />
+        <script src="/js/plupload/js/jquery.plupload.queue/jquery.plupload.queue.min.js"></script>                
+        -->

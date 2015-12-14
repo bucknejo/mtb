@@ -288,24 +288,24 @@
 
                 // row 1
                 var row = $('<tr>');
-                var a1 = $('<td rowspan="7" valign="middle">').append($('<div class="group-add-ad alley">'));        
+                var a1 = $('<td rowspan="9" valign="middle">').append($('<div class="group-add-ad alley">'));        
                 var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
-                var c2 = $('<td colspan="5">').append(group_name);
-                var a2 = $('<td rowspan="7" valign="middle">').append($('<div class="group-add-ad alley">'));
+                var c2 = $('<td>').append(group_name);
+                var a2 = $('<td rowspan="9" valign="middle">').append($('<div class="group-add-ad alley">'));
                 row.append(a1).append(c1).append(c2).append(a2);
                 table.append(row);
 
                 // row 2
                 row = $('<tr>');
                 c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
-                c2 = $('<td colspan="5">').append(group_description);
+                c2 = $('<td>').append(group_description);
                 row.append(c1).append(c2);
                 table.append(row);
 
                 // row 3
                 row = $('<tr>');
                 c1 = $('<td>').append($('<div class="label-02">').append('Deputy:'));
-                c2 = $('<td colspan="5">').append(group_deputy);
+                c2 = $('<td>').append(group_deputy);
                 row.append(c1).append(c2);
                 table.append(row);
 
@@ -313,11 +313,21 @@
                 row = $('<tr>');
                 c1 = $('<td>').append($('<div class="label-02">').append('Join:'));
                 c2 = $('<td>').append(group_join);
-                var c3 = $('<td>').append($('<div class="label-02">').append('Locked:'));
-                var c4 = $('<td>').append(group_locked);
-                var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
-                var c6 = $('<td>').append(group_type);
-                row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+                row.append(c1).append(c2);
+                table.append(row);
+                
+                // row 4
+                row = $('<tr>');
+                c1 = $('<td>').append($('<div class="label-02">').append('Locked:'));
+                c2 = $('<td>').append(group_locked);
+                row.append(c1).append(c2);
+                table.append(row);
+
+                // row 4
+                row = $('<tr>');
+                c1 = $('<td>').append($('<div class="label-02">').append('Type:'));
+                c2 = $('<td>').append(group_type);
+                row.append(c1).append(c2);
                 table.append(row);
 
                 // row 5
@@ -349,7 +359,7 @@
                     }
 
                 }
-                c2 = $('<td colspan="5">').append(members);
+                c2 = $('<td>').append(members);
                 row.append(c1).append(c2);
                 table.append(row);
                 
@@ -382,13 +392,13 @@
                     }
 
                 }
-                c2 = $('<td colspan="5">').append(friends);
+                c2 = $('<td>').append(friends);
                 row.append(c1).append(c2);
                 table.append(row);
 
                 // row 7
                 row = $('<tr>');
-                c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+                c1 = $('<td colspan="2" align="center">').append(update).append(cancel);
                 row.append(c1);
                 table.append(row);
 
@@ -1691,39 +1701,49 @@
         
         // row 1
         var row = $('<tr>');
-        var a1 = $('<td rowspan="6" valign="middle">').append($('<div class="group-add-ad alley">'));        
+        var a1 = $('<td rowspan="8" valign="middle">').append($('<div class="group-add-ad alley">'));        
         var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
-        var c2 = $('<td colspan="5">').append(group_name);
-        var a2 = $('<td rowspan="6" valign="middle">').append($('<div class="group-add-ad alley">'));
+        var c2 = $('<td>').append(group_name);
+        var a2 = $('<td rowspan="8" valign="middle">').append($('<div class="group-add-ad alley">'));
         row.append(a1).append(c1).append(c2).append(a2);
         table.append(row);
         
         // row 2
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
-        c2 = $('<td colspan="5">').append(group_description);
+        c2 = $('<td>').append(group_description);
         row.append(c1).append(c2);
         table.append(row);
         
         // row 3
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Deputy:'));
-        c2 = $('<td colspan="5">').append(group_deputy);
+        c2 = $('<td>').append(group_deputy);
         row.append(c1).append(c2);
         table.append(row);
         
         // row 4
         row = $('<tr>');
-        c1 = $('<td>').append($('<div class="label-02">').append('Join:'));
+        c1 = $('<td>').append($('<div class="label-02">').append('Joinable:'));
         c2 = $('<td>').append(group_join);
-        var c3 = $('<td>').append($('<div class="label-02">').append('Locked:'));
-        var c4 = $('<td>').append(group_locked);
-        var c5 = $('<td>').append($('<div class="label-02">').append('Type:'));
-        var c6 = $('<td>').append(group_type);
-        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        row.append(c1).append(c2);
         table.append(row);
         
         // row 5
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Locked:'));
+        c2 = $('<td>').append(group_locked);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 6
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Type:'));
+        c2 = $('<td>').append(group_type);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 7
         row = $('<tr>');
         c1 = $('<td valign="top">').append($('<div class="label-02">').append('Friends:'));
         var members = $('<table class="ride-management friends" style="width: 450px;">');
@@ -1752,13 +1772,13 @@
             }
             
         }
-        c2 = $('<td colspan="5">').append(members);
+        c2 = $('<td>').append(members);
         row.append(c1).append(c2);
         table.append(row);
         
-        // row 6
+        // row 8
         row = $('<tr>');
-        c1 = $('<td colspan="6" align="center">').append(insert).append(cancel);
+        c1 = $('<td colspan="2" align="center">').append(insert).append(cancel);
         row.append(c1);
         table.append(row);
                         

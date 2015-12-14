@@ -174,22 +174,46 @@
         
         var config = {
             height: 500,
-            width: 800
+            width: 600
         };
     
-        var div = $('<div>');
+        var div = $('<div class="mtb-carousel-photo-dialog">');
+        
+        var header = $('<div class="mtb-carousel-photo-dialog-header">');
+        
+        var title = $('<div class="mtb-carousel-photo-dialog-title">').text('Photo Management');        
+        var upload = $('<button class="mtb-carousel-photo-dialog-upload" style="font-size: 10px;">').button({
+            icons: {
+                primary: 'ui-icon-arrowthickstop-1-n'
+            },
+            text: true,
+            label: 'Upload'                                            
+        }).click(function(){
+            $('#pluploader').toggle();        
+        });
+        
+        var footer = $('<div class="mtb-carousel-photo-dialog-footer">');
+        
+        var uploader = $('<div id="pluploader" style="display:none;">').append(
+            $('<p>').append('Your browser does not have flash, SilverLight, or HTML5 support.')
+        );
+        
+        header.append(title);
+        header.append(upload);
+        div.append(header);
+        div.append(footer);
+        div.append(uploader);
         
         if (isArray(photos)) {
-            var table = $('<table class="mtb-carousel-photo-management">');
+            var table = $('<table class="mtb-carousel-photo-management" width="100%">');
             
             for (var j=0; j < photos.length; j++) {
                 var photo = photos[j];
-                var row = $('<tr>');
+                var row1 = $('<tr>');
                 
-                var c1 = $('<td>');
-                var c2 = $('<td>');
-                var c3 = $('<td>');
-                var c4 = $('<td>');
+                var c1 = $('<td valign="top">');
+                var c2 = $('<td valign="top">');
+                var c3 = $('<td valign="top">');
                 
                 var img = $('<img />', {
                     alt: photo.alt,
@@ -202,29 +226,39 @@
                 var details = $('<div>');
                 details.append('Date Created: ' + photo.date_created + '<br />');
                 details.append('Last Updated: ' + photo.last_updated + '<br />');
-                c2.append(details);
-                                
-                var description = $('<div>');
-                description.append(photo.description);
-                c3.append(description);
                 
+                var description = $('<div>');
+                description.append((photo.description && photo.description !== '') ? photo.description : '[Description]');
+                details.append(description);
+                
+                c2.append(details);
+                                                
                 var operations = $('<div>');
                 var edit = $('<button>').button({
-                    text: 'Edit'
+                    icons: {
+                        primary: 'ui-icon-check'
+                    },
+                    text: true,
+                    label: 'Save'                                            
                 }).click(function() {
                     
                 });
                 var del = $('<button>').button({
-                    text: 'Remove'
+                    icons: {
+                        primary: 'ui-icon-close'
+                    },
+                    text: true,
+                    label: 'Cancel'                                            
                 }).click(function(){
                     
                 });
                 operations.append(edit);
                 operations.append(del);
-                c4.append(operations);
+                c3.append(operations);
                 
-                row.append(c1).append(c2).append(c3).append(c4);
-                table.append(row);
+                row1.append(c1).append(c2).append(c3);
+                table.append(row1);
+                
             }
             div.append(table);
         }
@@ -236,11 +270,63 @@
             width: config.width,
             close: function() {
                 $(this).destoy();
+            },
+            open: function() {
+                
+                uploader.plupload({
+                    // General settings
+                    runtimes : 'html5,htm4,flash,silverlight',
+                    url : "/examples/upload",
+
+                    // Maximum file size
+                    max_file_size : '2mb',
+
+                    chunk_size: '1mb',
+
+                    // Resize images on clientside if we can
+                    resize : {
+                        width : 200,
+                        height : 200,
+                        quality : 90,
+                        crop: true // crop to exact dimensions
+                    },
+
+                    // Specify what files to browse for
+                    filters : [
+                        {title : "Image files", extensions : "jpg,gif,png"},
+                        {title : "Zip files", extensions : "zip,avi"}
+                    ],
+
+                    // Rename files by clicking on their titles
+                    rename: true,
+
+                    // Sort files
+                    sortable: true,
+
+                    // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
+                    dragdrop: true,
+
+                    // Views to activate
+                    views: {
+                        list: true,
+                        thumbs: true, // Show thumbs
+                        active: 'thumbs'
+                    },
+
+                    // Flash settings
+                    flash_swf_url : '/js/plupload/js/Moxie.swf',
+
+                    // Silverlight settings
+                    silverlight_xap_url : '/js/plupload/js/Moxie.xap'                    
+                });
+
+                
+
             }
         });
                 
     }
-    
+        
     $.fn.mtbCarousel = function(options) {
         
         var args = Array.prototype.slice.call(arguments, 1);

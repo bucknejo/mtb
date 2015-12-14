@@ -79,7 +79,13 @@
     cursor: hand;    
 }
 
-table.mtb-carousel-photo-management {}
+.mtb-carousel-photo-dialog {font-size: 12px;}
+.mtb-carousel-photo-dialog-header {margin-top: 10px; margin-bottom: 10px;}
+.mtb-carousel-photo-dialog-title {float: left; text-decoration: underline;}
+.mtb-carousel-photo-dialog-upload {float: right; height: 22px;}
+.mtb-carousel-photo-dialog-footer {clear: both;}
+
+table.mtb-carousel-photo-management {margin-top: 10px;}
 table.mtb-carousel-photo-management {border: 0px solid #333; border-collapse: collapse; font-size: 11px;}
 table.mtb-carousel-photo-management tr {border: 0px solid #333;}
 table.mtb-carousel-photo-management tr td {border: 0px solid #333;padding: 2px 2px;}
