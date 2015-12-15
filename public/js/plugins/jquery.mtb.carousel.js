@@ -330,17 +330,13 @@
                         },
 
                         FilesAdded: function(up, files) {
-                            var html = '';
                             plupload.each(files, function(file) {                                
-                                //html += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
                                 document.getElementById(instance.id+'-plupload-file-list').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
                             });
-                            //list.html(html);
                         },
 
                         UploadProgress: function(up, file) {
                             document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-                            //$('#' + file.id).find('b').append($('<span>').append(file.percent + '%'));
                         },
 
                         Error: function(up, err) {
