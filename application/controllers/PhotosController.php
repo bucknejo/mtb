@@ -18,6 +18,7 @@ class PhotosController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
+        $ajaxContext->addActionContext('upload', 'json');
         $ajaxContext->initContext();                                
     }
     
@@ -53,4 +54,13 @@ class PhotosController extends Zend_Controller_Action
         
     }
     
+    public function uploadAction() 
+    {
+        
+        $data = Application_Plugin_Lib::upload();
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();        
+    }
+            
 }

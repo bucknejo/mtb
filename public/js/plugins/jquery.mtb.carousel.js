@@ -182,6 +182,8 @@
         var header = $('<div class="mtb-carousel-photo-dialog-header">');
         
         var title = $('<div class="mtb-carousel-photo-dialog-title">').text('Photo Management');        
+        
+        var i = 0;
         var upload = $('<button class="mtb-carousel-photo-dialog-upload" style="font-size: 10px;">').button({
             icons: {
                 primary: 'ui-icon-arrowthickstop-1-n'
@@ -189,14 +191,34 @@
             text: true,
             label: 'Upload'                                            
         }).click(function(){
-            $('#pluploader').toggle();        
+            log(instance, instance.name, 'photoManagement', 'clicked: ' + i++);            
+            $('#'+instance.id+'-plupload-upload-container').toggle();        
         });
         
         var footer = $('<div class="mtb-carousel-photo-dialog-footer">');
         
-        var uploader = $('<div id="pluploader" style="display:none;">').append(
-            $('<p>').append('Your browser does not have flash, SilverLight, or HTML5 support.')
-        );
+        var uploader = $('<div id="'+instance.id+'-plupload-upload-container" style="display:none;">');
+        
+        var list = $('<div id="'+instance.id+'-plupload-file-list" style="margin-bottom:5px;">');
+        var select = $('<button id="'+instance.id+'-plupload-upload-select">').button({
+            icons: {
+                primary: 'ui-icon-folder-open'
+            },
+            text: true,
+            label: 'Select'                                                        
+        });
+        
+        var start = $('<button id="'+instance.id+'-plupload-file-upload-start">').button({
+            icons: {
+                primary: 'ui-icon-play'
+            },
+            text: true,
+            label: 'Start'                                                        
+        });
+        
+        uploader.append(list);
+        uploader.append(select);
+        uploader.append(start);
         
         header.append(title);
         header.append(upload);
@@ -266,61 +288,70 @@
         div.dialog({
             autoOpen: true,
             height: config.height,
+            modal: true,
             title: 'Photos',
             width: config.width,
             close: function() {
-                $(this).destoy();
+                $(this).dialog("destroy");                
             },
             open: function() {
                 
-                uploader.plupload({
+                var x = new plupload.Uploader({
                     // General settings
                     runtimes : 'html5,htm4,flash,silverlight',
-                    url : "/examples/upload",
-
-                    // Maximum file size
-                    max_file_size : '2mb',
-
-                    chunk_size: '1mb',
-
-                    // Resize images on clientside if we can
-                    resize : {
-                        width : 200,
-                        height : 200,
-                        quality : 90,
-                        crop: true // crop to exact dimensions
-                    },
-
-                    // Specify what files to browse for
-                    filters : [
-                        {title : "Image files", extensions : "jpg,gif,png"},
-                        {title : "Zip files", extensions : "zip,avi"}
-                    ],
-
-                    // Rename files by clicking on their titles
-                    rename: true,
-
-                    // Sort files
-                    sortable: true,
-
-                    // Enable ability to drag'n'drop files onto the widget (currently only HTML5 supports that)
-                    dragdrop: true,
-
-                    // Views to activate
-                    views: {
-                        list: true,
-                        thumbs: true, // Show thumbs
-                        active: 'thumbs'
-                    },
-
+                    url : "/photos/upload",
+                    
+                    browse_button : instance.id+'-plupload-upload-select',
+                    container: instance.id+'-plupload-upload-container',
+                    
+                    filters : {
+                        max_file_size : '10mb',
+                        mime_types: [
+                            {title : "Image files", extensions : "jpg,gif,png"},
+                            {title : "Zip files", extensions : "zip"}
+                        ]
+                    },                    
+                    
                     // Flash settings
-                    flash_swf_url : '/js/plupload/js/Moxie.swf',
+                    flash_swf_url : '/plupload/js/Moxie.swf',
 
                     // Silverlight settings
-                    silverlight_xap_url : '/js/plupload/js/Moxie.xap'                    
-                });
+                    silverlight_xap_url : '/plupload/js/Moxie.xap',                    
+                    
+                    init: {
+                        PostInit: function() {
+                            list.html('');
+                            
+                            start.click(function() {
+                                x.start();
+                                return false;                                
+                            });
+                            
+                        },
 
+                        FilesAdded: function(up, files) {
+                            var html = '';
+                            plupload.each(files, function(file) {                                
+                                //html += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                                document.getElementById(instance.id+'-plupload-file-list').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                            });
+                            //list.html(html);
+                        },
+
+                        UploadProgress: function(up, file) {
+                            document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+                            //$('#' + file.id).find('b').append($('<span>').append(file.percent + '%'));
+                        },
+
+                        Error: function(up, err) {
+                            //document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
+                            log(instance, instance.name, 'Error: ', JSON.stringify(err));
+                        }
+                    }                    
+
+                });
                 
+                x.init();
 
             }
         });
