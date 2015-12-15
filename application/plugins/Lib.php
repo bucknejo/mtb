@@ -23,7 +23,7 @@ class Application_Plugin_Lib
         
     }
     
-    public static function upload() {
+    public static function upload($destination) {
         
 
         /**
@@ -82,7 +82,7 @@ class Application_Plugin_Lib
 
         //$filePath = $targetDir . DIRECTORY_SEPARATOR . $fileName;
         $filePath = $targetDir . $fileName;
-
+        
         // Create target dir
         if (!file_exists($targetDir))
             @mkdir($targetDir);
@@ -166,11 +166,25 @@ class Application_Plugin_Lib
         if (!$chunks || $chunk == $chunks - 1) {
             // Strip the temp .part suffix off 
             rename("{$filePath}.part", $filePath);            
-        }                
-        
+        }
+                
         // Return JSON-RPC response
         $response = '{"jsonrpc" : "2.0", "result" : null, "id" : "id"}';
-                
+        
+        $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+        //$base = pathinfo($filePath, PATHINFO_BASENAME);
+        $base = basename($filePath, ".".$ext);
+        
+        $uniqid = uniqid();
+        
+        $filePathDestination = $destination.DIRECTORY_SEPARATOR.$base."_".$uniqid.".".$ext;
+        
+        $move = rename($filePath, $filePathDestination);
+        
+        if (!$move) {
+            $response = '{"jsonrpc" : "2.0", "error" : {"code": 106, "message": "Failed to move file to destination '.$filePathDestination.'."}, "id" : "id"}';
+        }
+        
         return $response;
         
         

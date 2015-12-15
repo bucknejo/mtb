@@ -56,8 +56,29 @@ class PhotosController extends Zend_Controller_Action
     
     public function uploadAction() 
     {
+        $data = "";
         
-        $data = Application_Plugin_Lib::upload();
+        try {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $id = $auth->getIdentity()->id;
+            }
+
+            if ($user_id > 0) {
+                $destination = realpath(APPLICATION_PATH . "/../public/users/$user_id/photos/");
+
+                $data = Application_Plugin_Lib::upload($destination);            
+            } else {
+                $data = '{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "User is not authenticated."}, "id" : "id"}';
+            }
+                                        
+        } catch (Exception $ex) {
+            $data = '{"jsonrpc" : "2.0", "error" : {"code": '.$ex->getCode().', "message": "'.$ex->getMessage().'"}, "id" : "id"}';
+        }
         
         $this->view->data = json_encode($data);
 	$this->view->layout()->disableLayout();        
