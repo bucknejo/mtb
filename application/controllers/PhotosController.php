@@ -56,7 +56,7 @@ class PhotosController extends Zend_Controller_Action
     
     public function uploadAction() 
     {
-        $data = "";
+        $data = array();
         
         try {
             
@@ -71,13 +71,68 @@ class PhotosController extends Zend_Controller_Action
             if ($user_id > 0) {
                 $destination = realpath(APPLICATION_PATH . "/../public/users/$user_id/photos/");
 
-                $data = Application_Plugin_Lib::upload($destination);            
+                $response = Application_Plugin_Lib::upload($destination);            
+                
+                if ($response["success"]) {
+                    $data["jsonrpc"] = "2.0";
+                    $data["result"] = null;
+                    $data["id"] = "id"; 
+                    
+                    // TODO - insert into photos table
+                    if ($response["filedetails"] != null) {
+                        
+                        $filedetails = $response["filedetails"];
+                        $table_name = "photos";
+                        $mapper = new Application_Model_TableMapper();
+                        
+                        $date = date('Y-m-d');
+                        
+                        $values = array(
+                            "date_created" => $date,
+                            "last_updated" => $date,                            
+                            "active" => 1,
+                            "user_id" => intval($user_id),
+                            "ride_id" => 0,
+                            "url" => $filedetails["name"],
+                            "alt" => "",
+                            "height" => 0,
+                            "width" => 0,
+                            "description" => ""
+                        );                       
+                        
+                        $i = $mapper->insertItem($table_name, $values);
+                    }
+                    
+                } else {
+                    $error = array();
+                    $error["message"] = $response["message"];
+                    $error["code"] = $response["code"];
+                    $data["jsonrpc"] = "2.0";
+                    $data["error"] = $error;
+                    $data["id"] = "id";                                        
+                }
+                
+                
             } else {
-                $data = '{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "User is not authenticated."}, "id" : "id"}';
+                
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["jsonrpc"] = "2.0";
+                $data["error"] = $error;
+                $data["id"] = "id";
+                
             }
                                         
         } catch (Exception $ex) {
-            $data = '{"jsonrpc" : "2.0", "error" : {"code": '.$ex->getCode().', "message": "'.$ex->getMessage().'"}, "id" : "id"}';
+            
+            $error = array();
+            $error["code"] = $ex->getCode();
+            $error["message"] = $ex->getMessage();
+            $data["jsonrpc"] = "2.0";
+            $data["error"] = $error;
+            $data["id"] = "id";
+            
         }
         
         $this->view->data = json_encode($data);

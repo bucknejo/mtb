@@ -342,6 +342,17 @@
                         Error: function(up, err) {
                             //document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
                             log(instance, instance.name, 'Error: ', JSON.stringify(err));
+                        },
+                        
+                        FileUploaded: function(up, file, response) {
+                            
+                            log(instance, instance.name, 'FileUploaded [file]: ', JSON.stringify(file));
+                            log(instance, instance.name, 'FileUploaded [response]: ', JSON.stringify(response));
+                            
+                        },
+                        
+                        UploadComplete: function(up, files) {
+                            
                         }
                     }                    
 
