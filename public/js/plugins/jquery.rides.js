@@ -106,6 +106,9 @@
                 }
             ],
             close: function() {
+                if (config.callback  && $.isFunction(config.callback)) {
+                    config.callback();
+                }
                 $(this).dialog('destroy');  
             },
             height: (config.height) ? config.height : 275,
@@ -1513,7 +1516,7 @@
                 tr.append($('<td>').append(friend.experience));
                 tr.append($('<td>').append(friend.type));
                 
-                var queue = $('<input type="checkbox">').data('friend', friend);
+                var queue = $('<input type="checkbox" class="ride-management-friends-available">').data('friend', friend);
                 
                 tr.append($('<td align="center">').append(queue));
                 table.append(tr);
@@ -1526,7 +1529,49 @@
                 text: true,
                 label: 'Update'                
             }).click(function(e){
-                e.preventDefault();
+                                
+                var friends = [];
+                $(".ride-management-friends-available").each(function() {
+                    var item = $(this);
+                    var friend = $(this).data('friend');
+                    //log(instance, instance.options.name, 'Friend', friend);
+                    if (item.is(':checked')) {
+                        friends.push(friend.id);                        
+                    }
+                });
+                
+                var post = $.extend(instance.options, {friends: friends.join('|')});
+                
+                log(instance, instance.options.name, 'Add Friends', JSON.stringify(friends));
+                
+                var request = {
+                    
+                    callback: function(data, instance) {
+                        
+                        var config = {
+                            success: data.success,
+                            code: (!data.error) ? data.code : data.error.code,
+                            message: (!data.error) ? data.message : data.error.message,
+                            callback: function() {
+                                build(instance);
+                            },
+                            height: (data.success) ? 150 : 700,
+                            modal: true,
+                            title: 'Add Friends'
+                        };
+
+                        display(instance, config);
+                        
+                    },                    
+                    data: post,
+                    type: 'post',
+                    url: 'friends/post'                    
+                };
+                
+                if (friends.length > 0) {
+                    server(request, instance);
+                }
+                                
             });
             
             var cancel = $('<button style="font-size: 9px;">').button({

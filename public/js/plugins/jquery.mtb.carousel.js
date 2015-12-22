@@ -330,9 +330,12 @@
                         },
 
                         FilesAdded: function(up, files) {
+                            var html = '';
                             plupload.each(files, function(file) {                                
-                                document.getElementById(instance.id+'-plupload-file-list').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                                //document.getElementById(instance.id+'-plupload-file-list').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                                html += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
                             });
+                            $('#'+instance.id+'-plupload-file-list').html(html);
                         },
 
                         UploadProgress: function(up, file) {
@@ -352,6 +355,9 @@
                         },
                         
                         UploadComplete: function(up, files) {
+                            
+                            div.dialog("close");
+                            build(instance);
                             
                         }
                     }                    

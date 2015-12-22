@@ -94,6 +94,8 @@ table.ride-management.rides.detail.group tr td {border: 1px solid #333;padding: 
 .ride-management-segment-header {font-weight: bold; font-size: 12px; margin: 3px;}
 .ride-management-segment-subheader {font-weight: bold; font-size: 10px; margin: 3px 0 3px 0; clear: both; }
 
+.ride-management-friends-available {}
+
 .circle {
     width: 10px;
     height: 10px;
@@ -126,6 +128,7 @@ table.ride-management.rides.detail.group tr td {border: 1px solid #333;padding: 
 
 .ui-datepicker-trigger {position: relative; top: 4px; left: 4px;}
 .ui-selectmenu-menu .ui-menu {max-height: 200px;}
+
 div.ui-datepicker {font-size: 11px;}
 
 .ride-add-ad {}
