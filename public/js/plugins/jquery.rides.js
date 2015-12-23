@@ -1422,7 +1422,7 @@
         avatar.append($('<div style="margin-left: 5px;">').append('<u>Avatar</u>'));
         var image = $('<img />', {
             id: '',
-            src: '/images/logo/rs-icon-250x.jpg',
+            src: user.avatar,
             alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
             name: '',
             class: '',

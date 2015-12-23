@@ -187,6 +187,15 @@ var Models = function(){
         }
     };
     
+    var photos = {
+        name: 'photos',
+        urls: {
+            get: 'photos/get',
+            post: 'photos/post',
+            del: 'photos/remove'
+        }
+    };
+    
     function getUsers() {
         return users;
     }
@@ -207,12 +216,17 @@ var Models = function(){
         return groups;
     }
     
+    function getPhotos() {
+        return photos;
+    }
+    
     return {
         users: getUsers,
         rides: getRides,
         locations: getLocations,
         addresses: getAddresses,
-        groups: getGroups
+        groups: getGroups,
+        photos: getPhotos
     };
     
 }();

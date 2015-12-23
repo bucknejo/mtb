@@ -231,7 +231,7 @@
             
             for (var j=0; j < photos.length; j++) {
                 var photo = photos[j];
-                var row1 = $('<tr>');
+                var row1 = $('<tr id="'+instance.id+'-photo-item-'+photo.id+'">');
                 
                 var c1 = $('<td valign="top">');
                 var c2 = $('<td valign="top">');
@@ -263,17 +263,45 @@
                     text: true,
                     label: 'Save'                                            
                 }).click(function() {
-                    
+                                        
                 });
                 var del = $('<button>').button({
                     icons: {
                         primary: 'ui-icon-close'
                     },
                     text: true,
-                    label: 'Cancel'                                            
-                }).click(function(){
+                    label: 'Delete'                                            
+                }).click(function(e){
+                                                           
+                    e.preventDefault();
                     
-                });
+                    var p = $(this).data('photo');
+                    log(instance, instance.options.name, 'photo', p);
+                                        
+                    var post = {id: p.id};
+                    
+                    var request = {
+                        callback: function(data, instance) {
+                            log(instance, 'photo delete', 'data', data);
+                            
+                            if (data.success) {
+                                $('#'+instance.id+'-photo-item-'+p.id).remove();                                
+                                build(instance);
+                            }
+                            
+                        },
+                        data: post,
+                        type: 'post',
+                        url: Models.photos().urls.del
+                    };
+                    
+                    log(instance, instance.options.name, 'request', request);
+                    
+                    server(request, instance);                    
+                    
+                }).data('photo', photo);
+                
+                
                 operations.append(edit);
                 operations.append(del);
                 c3.append(operations);

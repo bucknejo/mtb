@@ -18,6 +18,7 @@ class PhotosController extends Zend_Controller_Action
         $ajaxContext = $this->_helper->getHelper('AjaxContext');
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
+        $ajaxContext->addActionContext('remove', 'json');
         $ajaxContext->addActionContext('upload', 'json');
         $ajaxContext->initContext();                                
     }
@@ -51,6 +52,88 @@ class PhotosController extends Zend_Controller_Action
     
     public function postAction()
     {
+        
+    }
+    
+    public function removeAction()
+    {
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", -1);
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "photos";
+                    
+                    $i = $mapper->deleteItem($table_name, $id);
+                    
+                    if ($i > 0) {
+                    
+                        $data["success"] = true;
+                        $data["message"] = "Photo deleted: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Photo could not be deleted: $id";
+                        $data["success"] = false;
+                        $data["message"] = "Photo could not be deleted: $id";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Friend update fail.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Photo delete exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();        
         
     }
     
