@@ -53,9 +53,21 @@ class LoginController extends Zend_Controller_Action
                 "date_created" => $date,
                 "last_updated" => $date,
                 "active" => 1,
+                "user_name_internal" => "",
+                "user_name_external" => "",
+                "first_name" => "",
+                "last_name" => "",
                 "password" => $hash,
+                "role_id" => 1,
+                "email" => $email,
+                "skill" => "Beginner",
+                "experience" => 0,
+                "type" => "Mellow",
+                "guide" => 0,
                 "salt" => $salt,
-                "email" => $email                    
+                "viewable" => "",
+                "avatar" => "",                
+                "gender" => "M"
             );
             
             $mapper = new Application_Model_TableMapper();

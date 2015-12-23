@@ -245,7 +245,7 @@ class RidesController extends Zend_Controller_Action {
                 $query .= "(select first_name from users where id = a.user_id) as 'first_name', ";
                 $query .= "(select last_name from users where id = a.user_id) as 'last_name', ";
                 $query .= "(select email from users where id = a.user_id) as 'email', ";
-                $query .= "(select role from group_members where user_id = a.user_id) as 'role', ";
+                $query .= "(select role from group_members where user_id = a.user_id and group_id = a.group_id) as 'role', ";
                 $query .= "(select skill from users where id = a.user_id) as 'skill', ";
                 $query .= "(select experience from users where id = a.user_id) as 'experience', ";
                 $query .= "(select type from users where id = a.user_id) as 'type', ";

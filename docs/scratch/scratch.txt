@@ -684,3 +684,20 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
         <link href="/js/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css" type="text/css" />
         <script src="/js/plupload/js/jquery.plupload.queue/jquery.plupload.queue.min.js"></script>                
         -->
+
+
+        /*
+        for (var j=0; j < 5; j++) {
+            var img = $('<img />', {
+                id: '',
+                src: '/images/logo/rs-icon-250x.jpg',
+                alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
+                name: '',
+                class: '',
+                height: '50',
+                width: '50'            
+            });
+            photos.append(img);
+        }
+        */
+        

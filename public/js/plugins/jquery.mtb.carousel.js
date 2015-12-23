@@ -85,7 +85,7 @@
             data: instance.options,
             callback: function(data, instance) {
                 
-                log(instance, instance.options.name, 'build', data);
+                //log(instance, instance.options.name, 'build', data);
                 
                 var l = $('<div id="'+instance.id+'-carousel-scroll-left" class="mtb-carousel-scroll">').append($('<span>').append('&lt;'));
                 var m = $('<div id="'+instance.id+'-carousel-inner" class="mtb-carousel-inner">');

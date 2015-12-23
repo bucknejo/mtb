@@ -24,7 +24,7 @@ table.ride-management.group tr td {border: 0px solid #333;padding: 2px 2px;}
 table.ride-management.group tr span.label {color: #333; font-weight: bold; padding-right: 3px;}
 table.ride-management.group tr td span.content-green {color: green; padding-right: 3px;}
 table.ride-management.group tr td span.content-red {color: red; padding-right: 3px;}
-table.ride-management.group input[type="text"] {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.group input[type="text"] {border: 1px solid #333; font-size: 14px; padding: 5px 5px 5px 12px;  width: 450px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.group select.small {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.group select.large {border: 1px solid #333; font-size: 14px; width: 450px; height: 25px; font-family: 'Lato', Arial;}
 
@@ -95,6 +95,7 @@ table.ride-management.rides.detail.group tr td {border: 1px solid #333;padding: 
 .ride-management-segment-subheader {font-weight: bold; font-size: 10px; margin: 3px 0 3px 0; clear: both; }
 
 .ride-management-friends-available {}
+.ride-management-friends-group-add {}
 
 .circle {
     width: 10px;

@@ -208,14 +208,30 @@
         server({
             callback: function(groupinfo, instance) {
                 
-                log(instance, 'subgroup', 'data', groupinfo);
-                
-                
+                //log(instance, 'subgroup', 'data', groupinfo);
+                                
                 if (isArray(groupinfo.group)) {
                     var group = groupinfo.group[0];
                     var gid = group.id;
                 }
                 
+                var m = [];
+                if (isArray(groupinfo.members)) {
+                    for (var x=0; x < groupinfo.members.length; x++) {
+                        m.push(groupinfo.members[x].user_id);
+                    }                    
+                }
+                
+                var f = [];
+                if (isArray(groupinfo.members)) {
+                    for (var x=0; x < groupinfo.friends.length; x++) {
+                        f.push(groupinfo.friends[x].friend_id);
+                    }                    
+                }
+                
+                //log(instance, 'subgroup', 'members', m);
+                //log(instance, 'subgroup', 'friends', f);
+                    
                 // group add form
                 var form = $('<form id="'+instance.id+'-edit-group-form-'+gid+'" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');        
                 var table = $('<table class="ride-management group detail" width="100%" align="center">');
@@ -338,7 +354,7 @@
                 c1 = $('<td valign="top">').append($('<div class="label-02">').append('Members:'));
                 var members = $('<table class="ride-management friends" style="width: 450px;">');
                 if (isArray(groupinfo.members)) {
-
+                    
                     var tr = $('<tr class="table-header">');
                     tr.append($('<td width="45%">').append('Name'));
                     tr.append($('<td width="20%">').append('Skill'));
@@ -382,16 +398,22 @@
 
                     for (var i=0; i < groupinfo.friends.length; i++) {
                         var friend = groupinfo.friends[i];
-                        tr = $('<tr>');
-                        tr.append($('<td>').append(friend.first_name + ' ' + friend.last_name));
-                        tr.append($('<td>').append(friend.skill));
-                        tr.append($('<td align="center">').append(friend.experience));
-                        tr.append($('<td>').append(friend.type));
+                        
+                        if ($.inArray(friend.friend_id, m) === -1) {
+                            
+                            tr = $('<tr>');
+                            tr.append($('<td>').append(friend.first_name + ' ' + friend.last_name));
+                            tr.append($('<td>').append(friend.skill));
+                            tr.append($('<td align="center">').append(friend.experience));
+                            tr.append($('<td>').append(friend.type));
 
-                        var queue = $('<input type="checkbox">').data('friend', friend);                
-                        tr.append($('<td align="center">').append(queue));
+                            var queue = $('<input type="checkbox">').data('friend', friend);                
+                            tr.append($('<td align="center">').append(queue));
 
-                        friends.append(tr);
+                            friends.append(tr);                            
+                            
+                        }
+                        
                     }
 
                 }
@@ -472,9 +494,10 @@
         
         server({
             callback: function(data, instance) {
-                
-        
+                        
                 if (data) {
+                    
+                    //log(instance, 'subride', 'data', data);
                     
                     var green = {'background-color': 'green'};
                     var red = {'background-color': 'red'};
@@ -1151,6 +1174,8 @@
     
     function editUserInfoForm(instance, data) {
         
+        log(instance, 'edituserInfoForm', 'data', data);
+        
         var user = data.user[0];        
         
         var div = $('<div style="border: 0px dotted red;">');
@@ -1429,21 +1454,6 @@
         var photos = $('<div style="border:0px solid #333; clear: both;">');        
         photos.mtbCarousel({});
         
-        /*
-        for (var j=0; j < 5; j++) {
-            var img = $('<img />', {
-                id: '',
-                src: '/images/logo/rs-icon-250x.jpg',
-                alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
-                name: '',
-                class: '',
-                height: '50',
-                width: '50'            
-            });
-            photos.append(img);
-        }
-        */
-        
         divr.append(avatar);
         divr.append(equipment);
         divr.append(photos);
@@ -1700,25 +1710,55 @@
                 ignore: '',
                 submitHandler: function(f) {
                     
+                    var members = [];
+                    $(".ride-management-friends-group-add").each(function() {
+                        var item = $(this);
+                        var friend = $(this).data('friend');
+                        //log(instance, instance.options.name, 'Friend', friend);
+                        if (item.is(':checked')) {
+                            members.push(friend.id);                        
+                        }
+                    });
+                    
+                    
                     var group = {
-                        name: $('#'+instance.id+'-group_name').val(),
-                        description: $('#'+instance.id+'-group_description').val(),
-                        owner: $('#'+instance.id+'-group_owner').val(),
-                        deputy: $('#'+instance.id+'-group_deputy').val(),
-                        type: $('#'+instance.id+'-group_type').val(),
-                        join: $('#'+instance.id+'-group_join').val(),                        
-                        locked: $('#'+instance.id+'-group_locked').val()                        
+                        group_name: $('#'+instance.id+'-group_name').val(),
+                        group_description: $('#'+instance.id+'-group_description').val(),
+                        group_owner: $('#'+instance.id+'-group_owner').val(),
+                        group_deputy: $('#'+instance.id+'-group_deputy').val(),
+                        group_type: $('#'+instance.id+'-group_type').val(),
+                        group_join: $('#'+instance.id+'-group_join').val(),                        
+                        group_locked: $('#'+instance.id+'-group_locked').val()                        
                     };
                     
-                    var post = $.extend(group, instance.options, {action: 'add'});
-                    server({
+                    var post = $.extend(group, instance.options, {action: 'add', group_members: members.join('|')});
+                    
+                    var request = {
                         callback: function(data, instance) {
+                            
+                            var config = {
+                                success: data.success,
+                                code: (!data.error) ? data.code : data.error.code,
+                                message: (!data.error) ? data.message : data.error.message,
+                                callback: function() {
+                                    build(instance);
+                                },
+                                height: (data.success) ? 150 : 700,
+                                modal: true,
+                                title: 'Add Group'                                
+                            };
+                            
+                            display(instance, config);
                             
                         },
                         data: post,
                         url: Models.groups().urls.post,
                         type: 'post'
-                    }, instance);                    
+                    };
+                    
+                    log(instance, instance.options.name, 'Group Add', post);
+                    
+                    server(request, instance);                    
                     
                 },
                 success: function() {
@@ -1810,7 +1850,7 @@
                 tr.append($('<td>').append(friend.experience));
                 tr.append($('<td>').append(friend.type));
                 
-                var queue = $('<input type="checkbox">').data('friend', friend);                
+                var queue = $('<input type="checkbox" class="ride-management-friends-group-add">').data('friend', friend);                
                 tr.append($('<td align="center">').append(queue));
                 
                 members.append(tr);
