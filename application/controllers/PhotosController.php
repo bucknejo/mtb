@@ -72,6 +72,7 @@ class PhotosController extends Zend_Controller_Action
                 if ($this->getRequest()->isPost()) {
                     
                     $id = $this->_getParam("id", -1);
+                    $url = $this->_getParam("url", "");
                     
                     $mapper = new Application_Model_TableMapper();
                     $table_name = "photos";
@@ -79,6 +80,12 @@ class PhotosController extends Zend_Controller_Action
                     $i = $mapper->deleteItem($table_name, $id);
                     
                     if ($i > 0) {
+                        
+                        // try to unlink() the file
+                        if (!empty($url)) {
+                            $remove = realpath(APPLICATION_PATH . "/../public/users/$user_id/photos/$url");                            
+                            unlink($remove);
+                        }
                     
                         $data["success"] = true;
                         $data["message"] = "Photo deleted: $id";

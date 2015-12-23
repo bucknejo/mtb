@@ -278,7 +278,7 @@
                     var p = $(this).data('photo');
                     log(instance, instance.options.name, 'photo', p);
                                         
-                    var post = {id: p.id};
+                    var post = p;
                     
                     var request = {
                         callback: function(data, instance) {
