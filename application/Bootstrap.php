@@ -42,6 +42,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
     }    
     
+    protected function _initDb() {
+        
+        $config = Zend_Registry::get('config');
+        $options = $config->mtb->db->params;
+        $db = Zend_Db::factory('PDO_MYSQL', $options);
+        Zend_Db_Table_Abstract::setDefaultAdapter($db);
+        
+    }
+    
 
 }
 

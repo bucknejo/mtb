@@ -726,3 +726,10 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
                                 url: Models.groups().urls.save(),
                                 type: 'post'
                             };
+
+resources.db.adapter = "PDO_MYSQL"
+resources.db.params.host = "localhost"
+resources.db.params.port = "3306"
+resources.db.params.username = "redbone1_sb"
+resources.db.params.password = "snowbird"
+resources.db.params.dbname = "redbone1_snowbird"
