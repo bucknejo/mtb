@@ -121,7 +121,7 @@ class PhotosController extends Zend_Controller_Action
                 $error["code"] = "100";
                 $error["message"] = "User is not authenticated.";
                 $data["success"] = false;
-                $data["message"] = "Friend update fail.";
+                $data["message"] = "Photo delete fail.";
                 $data["code"] = 102;
                 $data["error"] = $error;                
                 

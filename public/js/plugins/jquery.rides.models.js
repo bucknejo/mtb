@@ -183,7 +183,8 @@ var Models = function(){
         name: 'groups',
         urls: {
             get: 'groups/get',
-            post: 'groups/post'
+            post: 'groups/post',
+            save: 'groups/save'
         }
     };
     

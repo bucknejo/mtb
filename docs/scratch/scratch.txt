@@ -701,3 +701,28 @@ resources.frontController.plugins.token.generate = "Application_Plugin_CSRFToken
         }
         */
         
+
+                            var request = {
+                                callback: function(data, instance) {
+
+                                    log(instance, 'group edit callback', 'data', data);
+
+                                    var config = {
+                                        success: data.success,
+                                        code: (!data.error) ? data.code : data.error.code,
+                                        message: (!data.error) ? data.message : data.error.message,
+                                        callback: function() {                                            
+                                            build(instance);
+                                        },
+                                        height: (data.success) ? 150 : 700,
+                                        modal: true,
+                                        title: 'Edit Group'                                
+                                    };
+
+                                    display(instance, config);
+
+                                },
+                                data: post,
+                                url: Models.groups().urls.save(),
+                                type: 'post'
+                            };

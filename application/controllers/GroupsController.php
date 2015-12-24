@@ -19,7 +19,6 @@ class GroupsController extends Zend_Controller_Action
         $ajaxContext->addActionContext('get', 'json');
         $ajaxContext->addActionContext('post', 'json');
         $ajaxContext->addActionContext('save', 'json');
-        //$ajaxContext->setAutoJsonSerialization(false);
         $ajaxContext->initContext();                                
     }
     
@@ -121,7 +120,7 @@ class GroupsController extends Zend_Controller_Action
                     
                     $name = $this->_getParam("group_name", "");
                     $description = $this->_getParam("group_description", "");
-                    $deputy = $this->_getParam("group_deputy", "");
+                    $deputy = $this->_getParam("group_deputy", 0);
                     $type = $this->_getParam("group_type", "");
                     $join = $this->_getParam("group_join", "");
                     $locked = $this->_getParam("group_locked", "");
@@ -188,21 +187,25 @@ class GroupsController extends Zend_Controller_Action
                             
                         }
                         
-                        // update deputy
-                        $values = array(
-                            "date_created" => $date,
-                            "last_updated" => $date,
-                            "active" => 1,
-                            "group_id" => $group_id,
-                            "user_id" => intval($deputy),
-                            "role" => "DEPUTY"
-                        );
-                        
-                        $wheres = array();
-                        $wheres[] = "group_id = $group_id";
-                        $wheres[] = "user_id = " . intval($deputy);
-                        
-                        $k = $mapper->updateSpecific($table_name, $values, $wheres);
+                        if (intval($deputy) > 0) {
+
+                            // update deputy
+                            $values = array(
+                                "date_created" => $date,
+                                "last_updated" => $date,
+                                "active" => 1,
+                                "group_id" => $group_id,
+                                "user_id" => intval($deputy),
+                                "role" => "DEPUTY"
+                            );
+
+                            $wheres = array();
+                            $wheres[] = "group_id = $group_id";
+                            $wheres[] = "user_id = " . intval($deputy);
+
+                            $k = $mapper->updateSpecific($table_name, $values, $wheres);
+                            
+                        }
 
                         if (count($failed) > 0) {
 
@@ -279,6 +282,186 @@ class GroupsController extends Zend_Controller_Action
     {
 
         $data = array();
+        
+        try 
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $group_id = $this->_getParam("group_id", -1);
+                    $name = $this->_getParam("group_name", "");
+                    $description = $this->_getParam("group_description", "");
+                    $deputy = $this->_getParam("group_deputy", 0);
+                    $type = $this->_getParam("group_type", "");
+                    $join = $this->_getParam("group_join", "");
+                    $locked = $this->_getParam("group_locked", "");
+                    
+                    $m = $this->_getParam("members", "");
+                    $members = explode('|', $m);
+                    
+                    $f = $this->_getParam("friends", "");
+                    $friends = explode('|', $f);
+                                        
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "groups";
+
+                    $date = date('Y-m-d');
+                    
+                    $values = array(
+                        "last_updated" => $date,
+                        "active" => 1,
+                        "name" => $name,
+                        "description" => $description,
+                        "owner" => $user_id,
+                        "deputy" => $deputy,
+                        "type" => $type,
+                        "join" => $join,
+                        "locked" => $locked
+                    );
+
+                    // update main group info
+                    $i = $mapper->updateItem($table_name, $values, $group_id);
+                    
+                    // after update, remove members, add friends
+                    
+                    if ($i >= 0) {
+                        
+                        $table_name = "group_members";
+                        
+                        // delete members (remove checkbox processing)
+                        foreach ($members as $id) {
+                            
+                            if (!empty($id)) {
+
+                                $j = $mapper->deleteItem($table_name, $id);
+
+                                $failed_remove = array();
+                                if ($j <= 0) {
+                                    array_push($failed_remove, $id);
+                                }
+                                
+                            }
+                                                        
+                        }
+                        
+                        foreach ($friends as $id) {
+                            
+                            if (!empty($id)) {
+                                
+                                // insert friend
+                                $values = array(
+                                    "date_created" => $date,
+                                    "last_updated" => $date,
+                                    "active" => 1,
+                                    "group_id" => $group_id,
+                                    "user_id" => $id,
+                                    "role" => "MEMBER"
+                                );
+
+                                $j = $mapper->insertItem($table_name, $values);
+
+                                $failed_add = array();
+                                if ($j <= 0) {
+                                    array_push($failed_add, $id);
+                                }                                
+                                
+                            }
+                            
+                        }
+                        
+                        if (intval($deputy) > 0) {
+
+                            // update deputy
+                            $values = array(
+                                "last_updated" => $date,
+                                "active" => 1,
+                                "group_id" => $group_id,
+                                "user_id" => intval($deputy),
+                                "role" => "DEPUTY"
+                            );
+
+                            $wheres = array();
+                            $wheres[] = "group_id = $group_id";
+                            $wheres[] = "user_id = " . intval($deputy);
+
+                            $k = $mapper->updateSpecific($table_name, $values, $wheres);
+                            
+                        }
+                        
+
+                        if (count($failed_remove) > 0 || count($failed_add) > 0) {
+
+                            $error = array();
+                            $error["code"] = "101";
+                            //$error["message"] = "Failed to remove: ".join($failed_remove, ",");
+                            $error["message"] = "Failed to modify members: ".join($failed_remove, ",") . " or add friends: " . join($failed_add, ",");
+                            $data["success"] = false;
+                            $data["message"] = "Some members failed to remove members or add friends from/to group.";
+                            $data["code"] = 101;
+                            $data["error"] = $error;
+
+                        } else {
+
+                            $data["success"] = true;
+                            $data["message"] = "Group and members edited successfully!";
+                            $data["code"] = 0;
+
+                        }                                            
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Failed to edit group";
+                        $data["success"] = false;
+                        $data["message"] = "Failed to edit group.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }                    
+                    
+                } else {
+                    
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+                
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Friend update fail.";
+                $data["error"] = $error;
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Friend add exception.";
+            $data["error"] = $error;
+            
+        }
+        
         
         $this->view->data = json_encode($data);        
 	$this->view->layout()->disableLayout();        

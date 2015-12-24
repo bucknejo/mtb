@@ -56,7 +56,7 @@
             type: request.type,
             data: request.data,
             beforeSend: function() {
-                
+                log(instance, instance.options.name, 'sending url: ', request.url);
             },
             success: function(response) {
                 x = response;
@@ -250,6 +250,7 @@
                     text: true,
                     label: 'Save'                                            
                 }).click(function(e){
+                    
                     e.preventDefault();
 
                     $('#'+instance.id+'-edit-group-form-'+gid).validate({
@@ -260,29 +261,69 @@
                         ignore: '',
                         submitHandler: function(f) {
 
+                            var ms = [];
+                            $(".ride-management-group-edit-members").each(function() {
+                                var item = $(this);
+                                var member = $(this).data('member');
+                                if (item.is(':checked')) {
+                                    ms.push(member.id);                        
+                                }
+                            });
+                            
+                            var fs = [];
+                            $(".ride-management-group-edit-friends").each(function() {
+                                var item = $(this);
+                                var friend = $(this).data('friend');
+                                if (item.is(':checked')) {
+                                    fs.push(friend.friend_id);                        
+                                }
+                            });
+                            
                             var group = {
-                                id: gid,
-                                name: $('#'+instance.id+'-group_name-'+gid).val(),
-                                description: $('#'+instance.id+'-group_description-'+gid).val(),
-                                owner: $('#'+instance.id+'-group_owner-'+gid).val(),
-                                deputy: $('#'+instance.id+'-group_deputy-'+gid).val(),
-                                type: $('#'+instance.id+'-group_type-'+gid).val(),
-                                join: $('#'+instance.id+'-group_join-'+gid).val(),                        
-                                locked: $('#'+instance.id+'-group_locked-'+gid).val()                        
+                                group_id: gid,
+                                group_name: $('#'+instance.id+'-group_name-'+gid).val(),
+                                group_description: $('#'+instance.id+'-group_description-'+gid).val(),
+                                group_owner: $('#'+instance.id+'-group_owner-'+gid).val(),
+                                group_deputy: $('#'+instance.id+'-group_deputy-'+gid).val(),
+                                group_type: $('#'+instance.id+'-group_type-'+gid).val(),
+                                group_join: $('#'+instance.id+'-group_join-'+gid).val(),                        
+                                group_locked: $('#'+instance.id+'-group_locked-'+gid).val()                        
                             };
 
-                            var post = $.extend(group, instance.options, {action: 'add'});
-                            server({
-                                callback: function(data, instance) {
+                            var post = $.extend(group, {action: 'edit', members: ms.join('|'), friends: fs.join('|')});
 
+                            log(instance, instance.options.name, 'Group Edit', post);
+                            
+                            var request = {
+                                callback: function(data, instance) {
+                                    log(instance, instance.options.name, 'data', data);
+                                    
+                                    var config = {
+                                        success: data.success,
+                                        code: (!data.error) ? data.code : data.error.code,
+                                        message: (!data.error) ? data.message : data.error.message,
+                                        callback: function() {                                            
+                                            build(instance);
+                                        },
+                                        height: (data.success) ? 150 : 700,
+                                        modal: true,
+                                        title: 'Edit Group'                                
+                                    };
+
+                                    display(instance, config);
+                                    
                                 },
                                 data: post,
-                                url: Models.groups().urls.post,
-                                type: 'post'
-                            }, instance);                    
+                                type: 'post',
+                                url: Models.groups().urls.save
+                            };
+
+                            server(request, instance);                            
 
                         },
                         success: function() {
+
+                            log(instance, 'form validation', 'group edit form validation success', {});
 
                         },
                         unhighlight: function(element, errorClass) {
@@ -371,7 +412,7 @@
                         tr.append($('<td align="center">').append(member.experience));
                         tr.append($('<td>').append(member.type));
 
-                        var queue = $('<input type="checkbox">').data('member', member);                
+                        var queue = $('<input type="checkbox" class="ride-management-group-edit-members">').data('member', member);                
                         tr.append($('<td align="center">').append(queue));
 
                         members.append(tr);
@@ -407,7 +448,7 @@
                             tr.append($('<td align="center">').append(friend.experience));
                             tr.append($('<td>').append(friend.type));
 
-                            var queue = $('<input type="checkbox">').data('friend', friend);                
+                            var queue = $('<input type="checkbox" class="ride-management-group-edit-friends">').data('friend', friend);                
                             tr.append($('<td align="center">').append(queue));
 
                             friends.append(tr);                            
@@ -1719,8 +1760,7 @@
                             members.push(friend.id);                        
                         }
                     });
-                    
-                    
+                                        
                     var group = {
                         group_name: $('#'+instance.id+'-group_name').val(),
                         group_description: $('#'+instance.id+'-group_description').val(),
