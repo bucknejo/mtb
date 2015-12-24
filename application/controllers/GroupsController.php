@@ -335,14 +335,27 @@ class GroupsController extends Zend_Controller_Action
                         
                         $table_name = "group_members";
                         
+                        $failed_add = array();    
+                        $failed_remove = array();                        
+                        
                         // delete members (remove checkbox processing)
                         foreach ($members as $id) {
                             
                             if (!empty($id)) {
 
                                 $j = $mapper->deleteItem($table_name, $id);
-
-                                $failed_remove = array();
+                                
+                                // if you are removing the deputy member
+                                // update the group row
+                                if ($id == intval($deputy)) {
+                                    $values = array(
+                                        "last_updated" => $date,
+                                        "deputy" => 0
+                                    );
+                                    $z = $mapper->updateItem("groups", $values, $group_id);
+                                    
+                                }
+                                
                                 if ($j <= 0) {
                                     array_push($failed_remove, $id);
                                 }
@@ -367,7 +380,7 @@ class GroupsController extends Zend_Controller_Action
 
                                 $j = $mapper->insertItem($table_name, $values);
 
-                                $failed_add = array();
+                                
                                 if ($j <= 0) {
                                     array_push($failed_add, $id);
                                 }                                

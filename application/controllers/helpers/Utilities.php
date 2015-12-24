@@ -49,6 +49,7 @@ class Zend_Controller_Action_Helper_Utilities extends Zend_Controller_Action_Hel
         
         $array = array();
         
+        $array[] = "0:[Select Value]";
         if (count($result) > 0) {
             
             foreach($result as $options) {
