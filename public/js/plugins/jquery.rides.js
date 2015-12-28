@@ -147,16 +147,17 @@
     }
     
     function subfriend(instance, data) {
-        
-        var div = $('<div style="width:100%;">');        
-        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+                
+        var div = $('<div style="width:100%; position: relative;">');        
+        var close = $('<div style="position: absolute; top: -15px; right: 5px; font-size: 20px;" class="clickable base">').append('&#10799;').click(function(){
             $('#' + 'friend-sub-row-' + data.id).remove();            
         });
         
         div.append(close);
         div.append($('<div style="clear:both;>'));
         
-        div.append("User Id: " + data.friend_id);
+        //div.append("Subfriend").append("<br />");
+        //div.append("User Id: " + data.friend_id);
         
         var json = $('<div>');        
         for (var prop in data) {
@@ -164,7 +165,55 @@
                 json.append($('<br/>')).append(prop + ': ' + data[prop]);
             }
         }
-        div.append(json);
+        //div.append(json);
+        
+        var friend = $('<div style="margin: 15px;">');
+        
+        var div1 = $('<div style="float:left; border: 0px solid #333; margin-right: 20px;">');
+        var div2 = $('<div style="float:left; border: 0px solid #444;">');
+        
+        var image = $('<img />', {
+            id: instance.id + '-subfriend-avatar-' + data.friend_id,
+            alt: 'Avatar',
+            src: data.avatar,
+            height: '75',
+            width: '75'                    
+        });
+        
+        var table = $('<table class="ride-management subfriend">');
+        
+        // row 1
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1" colspan="2">').append(data.first_name + ' ' + data.last_name);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 2
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Skill:');
+        var c2 = $('<td class="col2">').append(data.skill);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 3
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Experience:');
+        var c2 = $('<td class="col2">').append(data.experience);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 4
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Style:');
+        var c2 = $('<td class="col2">').append(data.type);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        div1.append(image);
+        div2.append(table);
+        
+        friend.append(div1).append(div2);                                
+        div.append(friend);
         
         return div;
         
@@ -180,6 +229,7 @@
         div.append(close);
         div.append($('<div style="clear:both;>'));
         
+        div.append("Subrider").append("<br />");
         div.append("User Id: " + data.user_id);
 
         var json = $('<div>');        
@@ -189,6 +239,22 @@
             }
         }
         div.append(json);
+        
+        var rider = $('<div>');
+        
+        /*
+        var image = $('<img />', {
+            id: '',
+            src: user.avatar,
+            alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
+            name: '',
+            class: '',
+            height: '100',
+            width: '100'            
+        });
+        */
+        
+        div.append(rider);
         
         return div;
         
@@ -207,9 +273,7 @@
         var d = $.extend({}, data);
         server({
             callback: function(groupinfo, instance) {
-                
-                //log(instance, 'subgroup', 'data', groupinfo);
-                                
+                                                
                 if (isArray(groupinfo.group)) {
                     var group = groupinfo.group[0];
                     var gid = group.id;
@@ -228,10 +292,7 @@
                         f.push(groupinfo.friends[x].friend_id);
                     }                    
                 }
-                
-                //log(instance, 'subgroup', 'members', m);
-                //log(instance, 'subgroup', 'friends', f);
-                    
+                                    
                 // group add form
                 var form = $('<form id="'+instance.id+'-edit-group-form-'+gid+'" style="padding:0;margin:0;border: 0px solid #333;clear: both;">');        
                 var table = $('<table class="ride-management group detail" width="100%" align="center">');
@@ -291,12 +352,9 @@
                             };
 
                             var post = $.extend(group, {action: 'edit', members: ms.join('|'), friends: fs.join('|')});
-
-                            log(instance, instance.options.name, 'Group Edit', post);
                             
                             var request = {
                                 callback: function(data, instance) {
-                                    log(instance, instance.options.name, 'data', data);
                                     
                                     var config = {
                                         success: data.success,
@@ -322,8 +380,6 @@
 
                         },
                         success: function() {
-
-                            log(instance, 'form validation', 'group edit form validation success', {});
 
                         },
                         unhighlight: function(element, errorClass) {
@@ -537,8 +593,6 @@
             callback: function(data, instance) {
                         
                 if (data) {
-                    
-                    //log(instance, 'subride', 'data', data);
                     
                     var green = {'background-color': 'green'};
                     var red = {'background-color': 'red'};
@@ -1186,7 +1240,6 @@
 
                 server({
                     callback: function(data, instance){
-                        log(instance, 'addRideForm', 'get addresses by location id', data);
                         ride_address.find('option').remove();
                         ride_address.selectmenu('destroy').selectmenu({ style: 'dropdown' });
                         $.each(getOptions(instance, data.selects.addresses), function(index, option){
@@ -1214,8 +1267,6 @@
     }
     
     function editUserInfoForm(instance, data) {
-        
-        log(instance, 'edituserInfoForm', 'data', data);
         
         var user = data.user[0];        
         
@@ -1279,11 +1330,8 @@
                     
                     var post = $.extend(update, instance.options, {id: user.id});
                     
-                    log(instance, 'editUserInfoForm', 'post', post);
                     server({
                         callback: function(data, instance) {
-                            
-                            log(instance, instance.options.name, 'update user', data);
                             
                             if (data.success) {
                                 
@@ -1520,7 +1568,7 @@
     }
     
     function friendManagement(instance, data) {
-        
+                
         var div = $('<div style="border:0px solid #333; width:100%;">');
         
         var fmfind = $('<div id="friend-management-find" style="border:0px dotted blue; margin-bottom:3px; display:none; padding: 5px;">');
@@ -1585,15 +1633,12 @@
                 $(".ride-management-friends-available").each(function() {
                     var item = $(this);
                     var friend = $(this).data('friend');
-                    //log(instance, instance.options.name, 'Friend', friend);
                     if (item.is(':checked')) {
                         friends.push(friend.id);                        
                     }
                 });
                 
                 var post = $.extend(instance.options, {friends: friends.join('|')});
-                
-                log(instance, instance.options.name, 'Add Friends', JSON.stringify(friends));
                 
                 var request = {
                     
@@ -1755,7 +1800,6 @@
                     $(".ride-management-friends-group-add").each(function() {
                         var item = $(this);
                         var friend = $(this).data('friend');
-                        //log(instance, instance.options.name, 'Friend', friend);
                         if (item.is(':checked')) {
                             members.push(friend.id);                        
                         }
@@ -1795,8 +1839,6 @@
                         url: Models.groups().urls.post,
                         type: 'post'
                     };
-                    
-                    log(instance, instance.options.name, 'Group Add', post);
                     
                     server(request, instance);                    
                     

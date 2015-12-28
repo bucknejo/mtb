@@ -56,7 +56,11 @@ class RidesController extends Zend_Controller_Action {
         $query .= "(select skill from users where id = a.friend_id) as 'skill', ";
         $query .= "(select experience from users where id = a.friend_id) as 'experience', ";
         $query .= "(select type from users where id = a.friend_id) as 'type', ";
-        $query .= "(select guide from users where id = a.friend_id) as 'guide' ";
+        $query .= "(select guide from users where id = a.friend_id) as 'guide', ";
+        $query .= "(select viewable from users where id = a.friend_id) as 'viewable', ";
+        $query .= "(select avatar from users where id = a.friend_id) as 'avatar', ";
+        $query .= "(select gender from users where id = a.friend_id) as 'gender', ";
+        $query .= "(select reputation from users where id = a.friend_id) as 'reputation' ";
         $query .= "from	friends a ";
         $query .= "where user_id = $user_id; ";
         $data["friends"] = $mapper->getCustomSelect($query);
@@ -249,7 +253,11 @@ class RidesController extends Zend_Controller_Action {
                 $query .= "(select skill from users where id = a.user_id) as 'skill', ";
                 $query .= "(select experience from users where id = a.user_id) as 'experience', ";
                 $query .= "(select type from users where id = a.user_id) as 'type', ";
-                $query .= "(select guide from users where id = a.user_id) as 'guide' ";
+                $query .= "(select guide from users where id = a.user_id) as 'guide', ";
+                $query .= "(select viewable from users where id = a.user_id) as 'viewable', ";
+                $query .= "(select avatar from users where id = a.user_id) as 'avatar', ";
+                $query .= "(select gender from users where id = a.user_id) as 'gender', ";
+                $query .= "(select reputation from users where id = a.user_id) as 'reputation' ";
                 $query .= "from riders a ";
                 $query .= "where ride_id = $id;";
                 
