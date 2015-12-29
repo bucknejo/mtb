@@ -12,7 +12,7 @@ class RidesController extends Zend_Controller_Action {
         $ajaxContext->addActionContext('main', 'json');
         $ajaxContext->addActionContext('users', 'json');
         $ajaxContext->addActionContext('addresses', 'json');
-        //$ajaxContext->setAutoJsonSerialization(false);
+        $ajaxContext->addActionContext('post', 'json');
         $ajaxContext->initContext();                                
     }
     
@@ -285,6 +285,123 @@ class RidesController extends Zend_Controller_Action {
     
     public function addressesAction() {
         
+        
+    }
+    
+    public function postAction() {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $d = date('Y-m-d');
+                                        
+                    $name = $this->_getParam("name", "");
+                    $description = $this->_getParam("description", "");
+                    $owner = $this->_getParam("owner", "");
+                    $group = $this->_getParam("group", "");
+                    $location = $this->_getParam("location", "");
+                    $address = $this->_getParam("address", "");
+                    $date = $this->_getParam("date", "");
+                    $time = $this->_getParam("time", "");
+                    $status = $this->_getParam("status", "");
+                    $join = $this->_getParam("join", "");
+                    $tempo = $this->_getParam("tempo", "");
+                    $drop = $this->_getParam("drop", "");
+                    $public = $this->_getParam("public", "");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "rides";
+                    
+                    $values = array(
+                        "date_created" => $d,
+                        "last_updated" => $d,
+                        "active" => 1,
+                        "name" => $name,
+                        "description" => $description,
+                        "owner" => $user_id,
+                        "group_id" => $group,
+                        "location_id" => $location,
+                        "address_id" => $address,
+                        "date" => date('Y-m-d', strtotime($date)),
+                        "time" => $time,
+                        "status" => "ON TIME",
+                        "join" => $join,
+                        "tempo" => $tempo,
+                        "drop" => $drop,
+                        "public" => $public
+                    );
+                    
+                    $i = $mapper->insertItem($table_name, $values);
+                    
+                    $id = $mapper->getLastInsertId($table_name);
+                    
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Ride added: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Ride could not be added.";
+                        $data["success"] = false;
+                        $data["message"] = "Ride could not be added.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Ride add fail.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride add exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
         
     }
     

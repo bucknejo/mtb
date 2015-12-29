@@ -81,7 +81,7 @@ table.ride-management.rides.add tr {border: 0px solid #333;}
 table.ride-management.rides.add tr:nth-child(even) {background: #fff;}
 table.ride-management.rides.add tr:nth-child(odd) {background: #fff;}
 table.ride-management.rides.add tr td {border: 0px solid #333;padding: 5px 5px;}
-table.ride-management.rides.add input[type="text"] {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
+table.ride-management.rides.add input[type="text"] {border: 1px solid #333; font-size: 14px; padding: 5px 5px 5px 12px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.rides.add select.small {border: 1px solid #333; font-size: 14px; width: 100px; height: 25px; font-family: 'Lato', Arial;}
 table.ride-management.rides.add select.large {border: 1px solid #333; font-size: 14px; width: 435px; height: 25px; font-family: 'Lato', Arial;}
 
@@ -175,3 +175,15 @@ div.ui-datepicker {font-size: 11px;}
 .user-details-vertical-align {position: relative; top: 50%; transform: translateY(-50%);}
 .equipment-list-label-01 {display: inline-block; font-size: 9px; padding-right: 5px; width: 100px;}
 .equipment-list-label-02 {display: inline-block; font-size: 9px; padding-right: 5px; width: 150px;}
+
+.guide-display {
+    background: #6493ed; 
+    color: #fff; 
+    font-size: 10px; 
+    font-weight: bold;    
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;        
+    padding: 2px 5px 2px 5px;
+    margin-left: 5px;
+}

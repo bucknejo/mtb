@@ -165,12 +165,13 @@
                 json.append($('<br/>')).append(prop + ': ' + data[prop]);
             }
         }
-        //div.append(json);
+        log(instance, instance.options.name, 'subfriend', data);
         
         var friend = $('<div style="margin: 15px;">');
         
-        var div1 = $('<div style="float:left; border: 0px solid #333; margin-right: 20px;">');
+        var div1 = $('<div style="float:left; border: 2px solid #465a9b; margin-right: 20px;">');
         var div2 = $('<div style="float:left; border: 0px solid #444;">');
+        var div3 = $('<div style="clear:both;margin-top: 10px;">');
         
         var image = $('<img />', {
             id: instance.id + '-subfriend-avatar-' + data.friend_id,
@@ -184,7 +185,7 @@
         
         // row 1
         var tr = $('<tr>');
-        var c1 = $('<td class="col1" colspan="2">').append(data.first_name + ' ' + data.last_name);
+        var c1 = $('<td class="col1" style="font-weight: bold;" colspan="2">').append(data.first_name + ' ' + data.last_name).append(guideDisplay(data.guide, data.friend_id));
         tr.append(c1).append(c2);
         table.append(tr);
         
@@ -209,10 +210,17 @@
         tr.append(c1).append(c2);
         table.append(tr);
         
+        // row 5
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Reputation Points:');
+        var c2 = $('<td class="col2">').append(data.reputation);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
         div1.append(image);
         div2.append(table);
         
-        friend.append(div1).append(div2);                                
+        friend.append(div1).append(div2).append(div3);                                
         div.append(friend);
         
         return div;
@@ -587,7 +595,7 @@
         
         var d = $.extend({}, instance.options, data, {process: "GET-ONE", oper: "SELECT"});
         
-        var rides = Models.rides();
+        //var rides = Models.rides();
         
         server({
             callback: function(data, instance) {
@@ -806,7 +814,7 @@
                 
             },
             data: d,
-            url: rides.urls.rides,
+            url: Models.rides().urls.rides,
             type: 'get'
         }, instance);    
                 
@@ -1020,18 +1028,17 @@
         
         var ride_name = $('<input type="text" id="'+instance.id+'-ride_name" name="'+instance.id+'-ride_name" class="required">');
         var ride_description = $('<input type="text" id="'+instance.id+'-ride_description" name="'+instance.id+'-ride_description" class="required">');
-        var ride_owner = $('<select id="'+instance.id+'-ride_owner" name="'+instance.id+'-ride_owner" class="">');
         var ride_group = $('<select id="'+instance.id+'-ride_group" name="'+instance.id+'-ride_group" class="large">');
         var ride_location = $('<select id="'+instance.id+'-ride_location" name="'+instance.id+'-ride_location" class="large">');
         var ride_address = $('<select id="'+instance.id+'-ride_address" name="'+instance.id+'-ride_address" class="large">');
-        var ride_date = $('<input type="text" id="'+instance.id+'-ride_date" name="'+instance.id+'-ride_date" class="required fdate" style="padding-left:10px;width:100px;" readonly="true">');
-        var ride_time = $('<select id="'+instance.id+'-ride_time" name="'+instance.id+'-ride_time" class="small">');
+        var ride_date = $('<input type="text" id="'+instance.id+'-ride_date" name="'+instance.id+'-ride_date" class="required fdate" style="padding-left:10px;" readonly="true">');
+        var ride_time = $('<select id="'+instance.id+'-ride_time" name="'+instance.id+'-ride_time" class="large">');
         var ride_status = $('<select id="'+instance.id+'-ride_status" name="'+instance.id+'-ride_status" class="">');
-        var ride_join = $('<select id="'+instance.id+'-ride_join" name="'+instance.id+'-ride_join" class="small">');
-        var ride_tempo = $('<select id="'+instance.id+'-ride_tempo" name="'+instance.id+'-ride_tempo" class="small">');
-        var ride_drop = $('<select id="'+instance.id+'-ride_drop" name="'+instance.id+'-ride_drop" class="small">');
+        var ride_join = $('<select id="'+instance.id+'-ride_join" name="'+instance.id+'-ride_join" class="large">');
+        var ride_tempo = $('<select id="'+instance.id+'-ride_tempo" name="'+instance.id+'-ride_tempo" class="large">');
+        var ride_drop = $('<select id="'+instance.id+'-ride_drop" name="'+instance.id+'-ride_drop" class="large">');
         var ride_states = $('<select id="'+instance.id+'-ride_states" name="'+instance.id+'-ride_states" class="">');
-        var ride_public = $('<select id="'+instance.id+'-ride_public" name="'+instance.id+'-ride_public" class="small">');
+        var ride_public = $('<select id="'+instance.id+'-ride_public" name="'+instance.id+'-ride_public" class="large">');
         
         var update = $('<button id="'+instance.id+'-ride_update" class="ride-add-button">').button({
             icons: {
@@ -1072,17 +1079,35 @@
                         public: $('#'+instance.id+'-ride_public').val()                        
                     };
                     
-                    var post = $.extend(ride, instance.options, {action: 'add'});
-                    server({
+                    var post = $.extend(ride, {action: 'add', token: instance.options.token});
+                    
+                    var request = {
                         callback: function(data, instance) {
+                            log(instance, instance.options.name, 'AddRideForm', post);                            
+                            log(instance, instance.options.name, 'AddRideForm', data);
+                            
+                            var config = {
+                                success: data.success,
+                                code: (!data.error) ? data.code : data.error.code,
+                                message: (!data.error) ? data.message : data.error.message,
+                                callback: function() {
+                                    build(instance);
+                                },
+                                height: (data.success) ? 150 : 700,
+                                modal: true,
+                                title: 'Add Ride'
+                            };
+
+                            display(instance, config);
                             
                         },
                         data: post,
                         url: Models.rides().urls.post,
-                        type: 'post'
-                    }, instance);
+                        type: 'post'                        
+                    };                    
                     
-                    
+                    server(request, instance);
+                                        
                 },
                 success: function() {
                     
@@ -1109,38 +1134,38 @@
         
         // row 1
         var row = $('<tr>');
-        var a1 = $('<td rowspan="8" valign="middle">').append($('<div class="ride-add-ad alley">'));
+        var a1 = $('<td rowspan="12" valign="middle">').append($('<div class="ride-add-ad alley">'));
         var c1 = $('<td>').append($('<div class="label-02">').append('Name:'));
-        var c2 = $('<td colspan="5">').append(ride_name);
-        var a2 = $('<td rowspan="8" valign="middle">').append($('<div class="ride-add-ad alley">'));
+        var c2 = $('<td>').append(ride_name);
+        var a2 = $('<td rowspan="12" valign="middle">').append($('<div class="ride-add-ad alley">'));
         row.append(a1).append(c1).append(c2).append(a2);
         table.append(row);
         
         // row 2
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Description:'));
-        c2 = $('<td colspan="5">').append(ride_description);
+        c2 = $('<td>').append(ride_description);
         row.append(c1).append(c2);               
         table.append(row);
         
         // row 3
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Group:'));
-        c2 = $('<td colspan="5">').append(ride_group);
+        c2 = $('<td>').append(ride_group);
         row.append(c1).append(c2);
         table.append(row);
 
         // row 4
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Location:'));
-        c2 = $('<td colspan="5">').append(ride_location);
+        c2 = $('<td>').append(ride_location);
         row.append(c1).append(c2);
         table.append(row);
         
         // row 5
         row = $('<tr>');
         c1 = $('<td>').append($('<span class="label-02">').append('Address:'));
-        c2 = $('<td colspan="5">').append(ride_address);
+        c2 = $('<td>').append(ride_address);
         row.append(c1).append(c2);
         table.append(row);
         
@@ -1148,27 +1173,47 @@
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Date:'));
         c2 = $('<td>').append(ride_date);
-        var c3 = $('<td>').append($('<div class="label-02">').append('Time:'));
-        var c4 = $('<td>').append(ride_time);
-        var c5 = $('<td>').append($('<span class="label-02">').append('Public:'));
-        var c6 = $('<td>').append(ride_public);
-        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
-        table.append(row);                
-        
+        row.append(c1).append(c2);
+        table.append(row);
+
         // row 7
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Time:'));
+        c2 = $('<td>').append(ride_time);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 8
+        row = $('<tr>');
+        c1 = $('<td>').append($('<span class="label-02">').append('Public:'));
+        c2 = $('<td>').append(ride_public);
+        row.append(c1).append(c2);
+        table.append(row);
+        
+        // row 9
         row = $('<tr>');
         c1 = $('<td>').append($('<div class="label-02">').append('Allow Join:'));
         c2 = $('<td>').append(ride_join);
-        c3 = $('<td>').append($('<div class="label-02">').append('Tempo:'));
-        c4 = $('<td>').append(ride_tempo);
-        c5 = $('<td>').append($('<span class="label-02">').append('Drop:'));
-        c6 = $('<td>').append(ride_drop);
-        row.append(c1).append(c2).append(c3).append(c4).append(c5).append(c6);
+        row.append(c1).append(c2);
+        table.append(row);
+                
+        // row 10
+        row = $('<tr>');
+        c1 = $('<td>').append($('<div class="label-02">').append('Tempo:'));
+        c2 = $('<td>').append(ride_tempo);
+        row.append(c1).append(c2);
+        table.append(row);
+                
+        // row 11
+        row = $('<tr>');
+        c1 = $('<td>').append($('<span class="label-02">').append('Drop:'));
+        c2 = $('<td>').append(ride_drop);
+        row.append(c1).append(c2);
         table.append(row);
                                 
-        // row 8
+        // row 12
         row = $('<tr>');
-        c1 = $('<td colspan="6" align="center">').append(update).append(cancel);
+        c1 = $('<td colspan="2" align="center">').append(update).append(cancel);
         row.append(c1);
         table.append(row);        
         
@@ -1231,7 +1276,6 @@
             ride_states.append(option);
         });
         
-        ride_owner.selectmenu();
         ride_group.selectmenu();
         ride_location.selectmenu({
             change: function() {
@@ -2085,6 +2129,19 @@
         }
         
         return options;
+        
+    }
+    
+    function guideDisplay(guide, user_id) {
+        
+        var span = '';
+        
+        if (guide === "1") {
+            span = $('<span class="guide-display">');
+            span.append('Guide').data('user_id', user_id);
+        } 
+        
+        return span;
         
     }
         
