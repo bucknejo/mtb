@@ -228,40 +228,373 @@
     }
     
     function subrider(instance, data) {
-
-        var div = $('<div style="width:100%;">');        
-        var close = $('<div style="float:right;font-size:20px;margin:0px 10px;" class="clickable base">').append('&#10799;').click(function(){
+        
+        var div = $('<div style="width:100%; position: relative;">');        
+        var close = $('<div style="position: absolute; top: -15px; right: 5px; font-size: 20px;" class="clickable base">').append('&#10799;').click(function(){
             $('#' + 'rider-sub-row-' + data.id).remove();            
         });
         
         div.append(close);
         div.append($('<div style="clear:both;>'));
         
-        div.append("Subrider").append("<br />");
-        div.append("User Id: " + data.user_id);
-
+        //div.append("Subfriend").append("<br />");
+        //div.append("User Id: " + data.user_id);
+        
         var json = $('<div>');        
         for (var prop in data) {
             if (data.hasOwnProperty(prop)) {
                 json.append($('<br/>')).append(prop + ': ' + data[prop]);
             }
         }
-        div.append(json);
+        log(instance, instance.options.name, 'subrider', data);
         
-        var rider = $('<div>');
+        var rider = $('<div style="margin: 15px;">');
         
-        /*
+        var div1 = $('<div style="float:left; border: 2px solid #465a9b; margin-right: 20px;">');
+        var div2 = $('<div style="float:left; border: 0px solid #444; margin-right: 10px;">');
+        var div3 = $('<div style="float:left; border: 0px solid #444; margin-right: 10px;">');
+        var div4 = $('<div style="float:left; border: 0px solid #444; margin-right: 10px;">');
+        var div5 = $('<div style="clear:both;margin-top: 10px;">');
+        
         var image = $('<img />', {
-            id: '',
-            src: user.avatar,
-            alt: 'Avatar: User ID ['+JSON.stringify(user.id)+']',
-            name: '',
-            class: '',
-            height: '100',
-            width: '100'            
+            id: instance.id + '-subrider-avatar-' + data.user_id,
+            alt: 'Avatar',
+            src: data.avatar,
+            height: '75',
+            width: '75'                    
         });
-        */
         
+        var table = $('<table class="ride-management subrider">');
+        
+        // row 1
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1" style="font-weight: bold;" colspan="2">').append(data.first_name + ' ' + data.last_name).append(guideDisplay(data.guide, data.friend_id));
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 2
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Skill:');
+        var c2 = $('<td class="col2">').append(data.skill);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 3
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Experience:');
+        var c2 = $('<td class="col2">').append(data.experience);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 4
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Style:');
+        var c2 = $('<td class="col2">').append(data.type);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        // row 5
+        var tr = $('<tr>');
+        var c1 = $('<td class="col1">').append('Reputation Points:');
+        var c2 = $('<td class="col2">').append(data.reputation);
+        tr.append(c1).append(c2);
+        table.append(tr);
+        
+        var actions = $('<div>');
+        
+        var checkin = $('<button class="subride-button-action">').button({
+            icons: {
+                primary: 'ui-icon-check'
+            },
+            text: true,
+            label: 'Check In'                                                        
+        }).click(function(e) {
+            e.preventDefault();
+            
+            var d = $(this).data('data');
+            
+            var post = $.extend(d, {token: instance.options.token});
+                       
+            var request = {
+                callback: function(data, instance) {
+
+                    var config = {
+                        success: data.success,
+                        code: (!data.error) ? data.code : data.error.code,
+                        message: (!data.error) ? data.message : data.error.message,
+                        callback: function() {                                            
+                            build(instance);
+                        },
+                        height: (data.success) ? 150 : 700,
+                        modal: true,
+                        title: 'Check In'                                
+                    };
+
+                    display(instance, config);
+
+                },
+                data: post,
+                type: 'post',
+                url: Models.rides().urls.checkin
+            };
+
+            server(request, instance);                            
+                        
+        }).data('data', data);
+        
+        var bailout = $('<button class="subride-button-action">').button({
+            icons: {
+                primary: 'ui-icon-close'
+            },
+            text: true,
+            label: 'Bail Out'                                                                    
+        }).click(function(e) {
+            e.preventDefault();
+            var d = $(this).data('data');
+            
+            var post = $.extend(d, {token: instance.options.token});
+                       
+            var request = {
+                callback: function(data, instance) {
+
+                    var config = {
+                        success: data.success,
+                        code: (!data.error) ? data.code : data.error.code,
+                        message: (!data.error) ? data.message : data.error.message,
+                        callback: function() {                                            
+                            build(instance);
+                        },
+                        height: (data.success) ? 150 : 700,
+                        modal: true,
+                        title: 'Bail Out'                                
+                    };
+
+                    display(instance, config);
+
+                },
+                data: post,
+                type: 'post',
+                url: Models.rides().urls.bailout
+            };
+
+            server(request, instance);                            
+            
+        }).data('data', data);
+        
+        var complete = $('<button class="subride-button-action">').button({
+            icons: {
+                primary: 'ui-icon-star'
+            },
+            text: true,
+            label: 'Mark Complete'                                                                                
+        }).click(function(e) {
+            e.preventDefault();
+            var d = $(this).data('data');
+            
+            var post = $.extend(d, {token: instance.options.token});
+                       
+            var request = {
+                callback: function(data, instance) {
+
+                    var config = {
+                        success: data.success,
+                        code: (!data.error) ? data.code : data.error.code,
+                        message: (!data.error) ? data.message : data.error.message,
+                        callback: function() {                                            
+                            build(instance);
+                        },
+                        height: (data.success) ? 150 : 700,
+                        modal: true,
+                        title: 'Mark Complete'                                
+                    };
+
+                    display(instance, config);
+
+                },
+                data: post,
+                type: 'post',
+                url: Models.rides().urls.complete
+            };
+
+            server(request, instance);                            
+            
+            
+        }).data('data', data);
+        
+        var comments = $('<button class="subride-button-action">').button({
+            icons: {
+                primary: 'ui-icon-pencil'
+            },
+            text: true,
+            label: 'Add Comments'                                                                                
+        }).click(function(e) {
+            e.preventDefault();
+            var d = $(this).data('data');
+            
+            var c = $('<div>').dialog({
+                autoOpen: true,
+                buttons: [
+                    {
+                        text: 'Save',
+                        click: function() {
+                            
+                            var note = $('#' + instance.id+'-subrider-manage-comments-'+d.id).val();
+                            
+                            var post = $.extend(d, {token: instance.options.token, note: note});
+                            
+                            var request = {
+                                callback: function(data, instance) {
+
+                                    var config = {
+                                        success: data.success,
+                                        code: (!data.error) ? data.code : data.error.code,
+                                        message: (!data.error) ? data.message : data.error.message,
+                                        callback: function() {                                            
+                                            c.dialog('close');
+                                            build(instance);
+                                        },
+                                        height: (data.success) ? 150 : 700,
+                                        modal: true,
+                                        title: 'Mark Complete'                                
+                                    };
+
+                                    display(instance, config);
+
+                                },
+                                data: post,
+                                type: 'post',
+                                url: Models.rides().urls.comments
+                            };
+                            
+                            log(instance, instance.options.name, 'Add Comments', request);
+
+                            server(request, instance);                            
+                                                                                    
+                        },
+                        style: ''
+                    },
+                    {
+                        text: 'Cancel',
+                        click: function() {
+                            $(this).dialog('close');
+                        },
+                        style: ''
+                    }
+                ],
+                close: function() {
+                    $(this).dialog('destroy');
+                },
+                open: function() {
+                    $('#' + instance.id+'-subrider-manage-comments-'+d.id).focus();
+                },
+                title: 'Add Ride Comments',
+                height: 300,
+                width: 600,
+                modal: true
+            });
+            
+            var t = $('<textarea id="'+instance.id+'-subrider-manage-comments-'+d.id+'" rows="7" cols="58">').data('data', d);
+            t.val(d.comment);
+            c.append(t);
+            
+        }).data('data', data);
+        
+        var ranking = $('<div>');
+        
+        for (var i=0; i < 5; i++) {
+            var star = $('<span class="subride-ranking-star" id="'+instance.id+'-subrider-manage-ranking-'+i+'">').append('&#8902;').data('data', data).data('i', i+1);
+            ranking.append(star);
+            if (parseInt(data.rating) > i) {
+                star.css({color: "#465a9b"});
+            }
+        }
+        
+        actions.append(checkin).append(bailout);
+        actions.append($('<br />'));
+        actions.append(complete).append(comments);
+        actions.append($('<br />'));
+        actions.append(ranking);
+        
+        ranking.find(".subride-ranking-star").click(function(){
+            var i = $(this).data('i');
+            var d = $(this).data('data');
+            
+            var post = $.extend(d, {token: instance.options.token, rating: i});
+
+            var request = {
+                callback: function(data, instance) {
+
+                    var config = {
+                        success: data.success,
+                        code: (!data.error) ? data.code : data.error.code,
+                        message: (!data.error) ? data.message : data.error.message,
+                        callback: function() {                                            
+                            build(instance);
+                        },
+                        height: (data.success) ? 150 : 700,
+                        modal: true,
+                        title: 'Rate this Ride!'                                
+                    };
+
+                    display(instance, config);
+
+                },
+                data: post,
+                type: 'post',
+                url: Models.rides().urls.rating
+            };
+            
+            log(instance, instance.options.name, 'Subride ranking (request): ', request);             
+
+            server(request, instance);                            
+            
+        });                        
+        
+        // function to toggle the availability of the actions
+        var v = function(){
+            
+            // disable all
+            if (parseInt(data.complete) === 1) {
+                checkin.prop('disabled', true);
+                bailout.prop('disabled', true);
+                complete.prop('disabled', true);
+            }
+            
+            // disable checkin
+            if (parseInt(data.rsvp) === 1) {
+                checkin.prop('disabled', true);                
+            }
+            
+            // disable bailout
+            if (parseInt(data.rsvp) === -1) {
+                bailout.prop('disabled', true);
+            }
+            
+            // disable complete
+            if (parseInt(data.rsvp) !== 1) {
+                complete.prop('disabled', true);
+            }
+            
+            // TODO
+            // disable ranking
+            if (parseInt(data.complete) !== 1) {
+                
+            }
+            
+        }();
+        
+        var text = $('<div style="">');
+        var header = $('<div style="font-size: 11px; font-weight: bold; text-decoration: underline;">').append("Comments");
+        var body = $('<div style="font-size: 11px;">').append((data.comment) ? data.comment : $('<div style="font-style: italic;">').append("There are no comments for this ride."));
+        text.append(header);
+        text.append(body);
+        
+        div1.append(image);
+        div2.append(table);
+        div3.append(actions);
+        div4.append(text);
+        
+        rider.append(div1).append(div2).append(div3).append(div4).append(div5);                                
         div.append(rider);
         
         return div;
@@ -852,7 +1185,43 @@
     
     function checkMark(val) {
         
-        return (val === '0') ? '<div style="color: red;text-align:center;">&#10799;</div>': '<div style="color: green;text-align:center;">&#10003;</div>';
+        var div = $('<div>');
+        
+        var css = {};
+        
+        val = parseInt(val);
+        
+        switch (val) {
+            case -1:
+                css = {
+                    color: "red",
+                    textAlign: "center"
+                };
+                div.append('&#10799;');
+                break;
+            case 0:
+                css = {
+                    color: "orange",
+                    textAlign: "center"
+                };
+                div.append('&#8709;');
+                break;
+            case 1:
+                css = {
+                    color: "green",
+                    textAlign: "center"
+                };
+                div.append('&#10003;');
+                break;
+            default:
+                css = {
+                };
+                break;
+        }
+        
+        return div.css(css);
+        
+        //return (val === '0') ? '<div style="color: red;text-align:center;">&#10799;</div>': '<div style="color: green;text-align:center;">&#10003;</div>';
     }
     
     function addUserDetails(instance, data) {

@@ -13,6 +13,11 @@ class RidesController extends Zend_Controller_Action {
         $ajaxContext->addActionContext('users', 'json');
         $ajaxContext->addActionContext('addresses', 'json');
         $ajaxContext->addActionContext('post', 'json');
+        $ajaxContext->addActionContext('checkin', 'json');
+        $ajaxContext->addActionContext('bailout', 'json');
+        $ajaxContext->addActionContext('complete', 'json');
+        $ajaxContext->addActionContext('comments', 'json');
+        $ajaxContext->addActionContext('rating', 'json');
         $ajaxContext->initContext();                                
     }
     
@@ -462,6 +467,447 @@ class RidesController extends Zend_Controller_Action {
         
         $this->view->data = json_encode($data);
         $this->view->layout()->disableLayout();        
+        
+    }
+    
+    public function checkinAction()
+    {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", "0");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "riders";
+                    
+                    $values = array(
+                        "rsvp" => 1
+                    );
+                    
+                    $i = $mapper->updateItem($table_name, $values, $id);
+                                                            
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Check In Successful: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Could not check in.";
+                        $data["success"] = false;
+                        $data["message"] = "Could not check in.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Could not check in.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride check in exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
+        
+        
+    }
+    
+    public function bailoutAction()
+    {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", "0");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "riders";
+                    
+                    $values = array(
+                        "rsvp" => -1
+                    );
+                    
+                    $i = $mapper->updateItem($table_name, $values, $id);
+                                                            
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Bail out Successful: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Could not bail out.";
+                        $data["success"] = false;
+                        $data["message"] = "Could not bail out.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Could not bail out.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride bail out exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
+        
+        
+    }
+    
+    public function completeAction() 
+    {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", "0");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "riders";
+                    
+                    $values = array(
+                        "complete" => 1
+                    );
+                    
+                    $i = $mapper->updateItem($table_name, $values, $id);
+                                                            
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Mark complete Successful: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Could not mark complete.";
+                        $data["success"] = false;
+                        $data["message"] = "Could not mark complete.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Could not mark complete.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride mark complete exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
+        
+        
+    }
+    
+    public function commentsAction()
+    {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", "0");
+                    $comment = $this->_getParam("note", "");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "riders";
+                    
+                    $values = array(
+                        "comment" => $comment
+                    );
+                    
+                    $i = $mapper->updateItem($table_name, $values, $id);
+                                                            
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Add comments Successful: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Could not add comments complete.";
+                        $data["success"] = false;
+                        $data["message"] = "Could not add comments complete.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Could not add comments complete.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride add comments exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
+        
+    }
+    
+    public function ratingAction()
+    {
+        
+        $data = array();
+        
+        try
+        {
+            
+            $auth = Zend_Auth::getInstance();
+
+            $user_id = 0;
+
+            if ($auth->hasIdentity()) {
+                $user_id = $auth->getIdentity()->id;
+                
+                if ($this->getRequest()->isPost()) {
+                    
+                    $id = $this->_getParam("id", "0");
+                    $rating = $this->_getParam("rating", "");
+                    
+                    $mapper = new Application_Model_TableMapper();
+                    $table_name = "riders";
+                    
+                    $values = array(
+                        "rating" => $rating
+                    );
+                    
+                    $i = $mapper->updateItem($table_name, $values, $id);
+                                                            
+                    if ($i > 0) {
+                                            
+                        $data["success"] = true;
+                        $data["message"] = "Add rating Successful: $id";
+                        $data["code"] = 0;                        
+                        
+                    } else {
+                        
+                        $error = array();
+                        $error["code"] = "104";
+                        $error["message"] = "Could not add rating complete.";
+                        $data["success"] = false;
+                        $data["message"] = "Could not add rating complete.";
+                        $data["code"] = 104;
+                        $data["error"] = $error;
+                        
+                    }
+                    
+                } else {
+                
+                    $error = array();
+                    $error["code"] = "102";
+                    $error["message"] = "Possible security violation.  Please check log(s).";
+                    $data["success"] = false;
+                    $data["message"] = "Bad HTTP Request Type.";
+                    $data["code"] = 102;
+                    $data["error"] = $error;
+                    
+                }
+                
+            } else {
+             
+                $error = array();
+                $error["code"] = "100";
+                $error["message"] = "User is not authenticated.";
+                $data["success"] = false;
+                $data["message"] = "Could not add rating.";
+                $data["code"] = 102;
+                $data["error"] = $error;                
+                
+            }
+            
+            
+        } catch (Exception $ex) {
+
+            $error = array();
+            $error["code"] = "Code: ".$ex->getCode();
+            $error["message"] = "Exception: ".$ex->getMessage();
+            $data["success"] = false;
+            $data["message"] = "Ride add rating exception.";
+            $data["error"] = $error;
+            
+        }
+        
+        $this->view->data = json_encode($data);
+	$this->view->layout()->disableLayout();                        
+        
         
     }
     

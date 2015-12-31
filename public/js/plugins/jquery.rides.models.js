@@ -161,7 +161,13 @@ var Models = function(){
         urls: {
             get: 'rides/get',
             post: 'rides/post',
-            rides: 'rides/rides'
+            rides: 'rides/rides',
+            checkin: 'rides/checkin',
+            bailout: 'rides/bailout',
+            complete: 'rides/complete',
+            comments: 'rides/comments',
+            rating: 'rides/rating'
+            
         }
     };
     

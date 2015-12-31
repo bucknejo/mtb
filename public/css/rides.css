@@ -45,14 +45,23 @@ table.ride-management.friends tr:nth-child(even) {background: #ccc;}
 table.ride-management.friends tr:nth-child(odd) {background: #fff;}
 table.ride-management.friends tr td {border: 1px solid #333;padding: 2px 2px;}
 
-table.ride-management.subfriend {border: 0px solid #333; border-collapse: collapse; font-size: 10px;}
-table.ride-management.subfriend tr {border: 0px solid #333;}
+table.ride-management.subfriend {border: 0px solid #333 !important; border-collapse: collapse; font-size: 10px;}
+table.ride-management.subfriend tr {border: 0px solid #333 !important;}
 table.ride-management.subfriend tr.table-header {background: #465a9b !important; color: #fff;}
 table.ride-management.subfriend tr:nth-child(even) {background: #fff;}
 table.ride-management.subfriend tr:nth-child(odd) {background: #fff;}
-table.ride-management.subfriend tr td {border: 0px solid #333;padding: 2px 2px;}
+table.ride-management.subfriend tr td {border: 0px solid #333 !important;padding: 2px 2px;}
 table.ride-management.subfriend tr td.col1 {width: 100px;}
 table.ride-management.subfriend tr td.col2 {width: 100px;}
+
+table.ride-management.subrider {border: 0px solid #333 !important; border-collapse: collapse; font-size: 10px;}
+table.ride-management.subrider tr {border: 0px solid #333 !important;}
+table.ride-management.subrider tr.table-header {background: #465a9b !important; color: #fff;}
+table.ride-management.subrider tr:nth-child(even) {background: #fff !important;}
+table.ride-management.subrider tr:nth-child(odd) {background: #fff !important;}
+table.ride-management.subrider tr td {border: 0px solid #333 !important;padding: 2px 2px;}
+table.ride-management.subrider tr td.col1 {width: 100px;}
+table.ride-management.subrider tr td.col2 {width: 100px;}
 
 
 table.ride-management.available {border: 0px solid greenyellow; border-collapse: collapse; font-size: 10px;}
@@ -151,6 +160,10 @@ div.ui-datepicker {font-size: 11px;}
 .ride-add-button {font-size: 10px !important; width: 75px;}
 .ride-add-button span.green {color: green !important; font-size:11px !important; margin-left: 3px;}
 .ride-add-button span.red {color: red !important; font-size:11px !important; margin-left: 3px;}
+
+.subride-button-action {font-size: 10px !important; width: 125px; margin: 3px;}
+.subride-ranking-star {font-size: 30px; color: #999; margin: 5px;}
+.subride-ranking-star:hover {cursor: pointer; cursor: hand;}
 
 .user-edit-ad {}
 /*

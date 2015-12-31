@@ -1,0 +1,11 @@
+id,date_created,last_updated,active,user_name_internal,user_name_external,first_name,last_name,password,role_id,email,skill,experience,type,guide,salt,viewable,avatar,gender,reputation
+1,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,jg,garciaje,Jerry,Garcia,68f085701bc1648c83b6c2cbd74ca439,1,jg@dead.net,Expert,2,Agressive,0,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,1,/images/logo/double-black.jpg,M,0
+2,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,bw,weirbo,Bob,Weir,fcbf6ca12bf153406d27b7fc7118ecd2,1,bw@dead.net,Advanced,10,Mellow,0,RTzZrZf4lKcJffgqnhoLqaCTsrP5/Del,1,/images/logo/double-black.jpg,M,0
+3,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,pl,leshph,Phil,Lesh,68f085701bc1648c83b6c2cbd74ca439,1,pl@dead.net,Advanced,15,Mellow,1,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,1,/images/logo/double-black.jpg,M,0
+4,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,kg,godcheke,Keith,Godcheaux,68f085701bc1648c83b6c2cbd74ca439,1,kg@dead.net,Advanced,8,Moderate,0,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,0,/images/logo/double-black.jpg,M,0
+5,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,dg,godchedo,"Donna Jean",Godcheaux,68f085701bc1648c83b6c2cbd74ca439,1,dg@dead.net,Intermediate,5,Steady,0,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,1,/images/logo/double-black.jpg,F,0
+6,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,mh,hartmi,Mickey,Hart,68f085701bc1648c83b6c2cbd74ca439,1,mh@dead.net,Intermediate,12,Steady,0,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,1,/images/logo/double-black.jpg,M,0
+7,"2015-11-02 00:00:00","2015-11-02 00:00:00",1,bk,kreutzbi,Bill,Kreutzman,68f085701bc1648c83b6c2cbd74ca439,1,bk@dead.net,Advanced,15,Mellow,0,Y4vE9hKbaBh8eD3SZtFo3SXsPnrTEMUy,1,/images/logo/double-black.jpg,M,0
+8,"2015-12-08 00:00:00","2015-12-08 00:00:00",1,ta,anastasiotr,Trey,Anastasio,44c55d5d4eeb642872da7ba80425b615,1,ta@phish.net,Expert,20,Mellow,0,pnnhv/7LCqV1bcq2qRaMHCUVMh4DWNJR,1,/images/logo/double-black.jpg,M,0
+9,"2015-12-08 00:00:00","2015-12-08 00:00:00",1,mg,gordonmi,Mike,Gordon,ce1af3bf6ed5c1931d447d1060f560bc,1,mg@phish.net,Expert,12,Steady,0,AVldkYYGbfeoU+QDftUIHI3mAXgHEK9a,1,/images/logo/double-black.jpg,M,0
+10,"2015-12-08 00:00:00","2015-12-08 00:00:00",1,jf,fishmanjo,Jon,Fishman,9cc60ad001ac320e7b6a2b3325f9ec23,1,jf@phish.net,Advanced,10,Mellow,0,BZgZhAt7HsLT0hNwcQDwmCtpWop00NyK,1,/images/logo/double-black.jpg,M,0
