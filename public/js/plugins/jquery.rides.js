@@ -132,13 +132,18 @@
     
     function main(data, instance) {
         
-        log(instance, 'main', 'token', data.token);
         instance.options.token = data.token;
         
         if (data.user_id > 0) {
+            
+            // set user
+            HLUser.setUser(data.user);
+            
             // build user section        
             instance.item.empty().append(addUserDetails(instance, data));                
             instance.item.append(addRideDetails(instance, data));            
+            
+
         } else {
             location.replace('login');
         }
@@ -499,14 +504,27 @@
             
         }).data('data', data);
         
-        var ranking = $('<div>');
+        var ranking = $('<div style="border: 0px solid orange; position: relative;">');
+        
+        //ranking.append($('<div style="margin-right: 10px; border:0px solid red; display: inline-block;">'));
         
         for (var i=0; i < 5; i++) {
-            var star = $('<span class="subride-ranking-star" id="'+instance.id+'-subrider-manage-ranking-'+i+'">').append('&#8902;').data('data', data).data('i', i+1);
-            ranking.append(star);
+            //var star = $('<span class="subride-ranking-star" id="'+instance.id+'-subrider-manage-ranking-'+i+'">').append('&#8902;').data('data', data).data('i', i+1);
+            var star = $('<img />', {
+                id: instance.id+'-subrider-manage-ranking-'+i,
+                alt: 'empty-star',               
+                src: '/images/common/rating-star-0.jpg',
+                class: 'subride-ranking-star'
+            }).data('data', data).data('i', i+1);
             if (parseInt(data.rating) > i) {
-                star.css({color: "#465a9b"});
+                star = $('<img />', {
+                    id: instance.id+'-subrider-manage-ranking-'+i,
+                    alt: 'empty-star',               
+                    src: '/images/common/rating-star-1.jpg',
+                    class: 'subride-ranking-star'
+                }).data('data', data).data('i', i+1);
             }
+            ranking.append(star);
         }
         
         actions.append(checkin).append(bailout);
@@ -944,6 +962,7 @@
                     var location_resources = data.location_resources;
                     var owner = data.owner;
                     var riders = data.riders;
+                    var user = data.user[0];
                     
                     var t = $('<table class="ride-management rides detail" width="100%">');
                     var row1 = $('<tr>');
@@ -1075,11 +1094,52 @@
                     div.append(t);                    
                     
                     // row 6
-                    t = $('<table class="ride-management rides detail" width="100%">');
-                    td1 = $('<td align="left" style="width:100%">')
-                            .append($('<span class="label-01">').append('Additional Riders'));
                     
+                    var jr = $('<button class="ride-add-button">').button({
+                        icons: {
+                            primary: 'ui-icon-plus'
+                        },
+                        text: true,
+                        label: 'Join Ride'                                                                            
+                    }).click(function(e) {
+                        e.preventDefault();
+                        
+                        var d = {
+                            date: ride.date,
+                            time: ride.time
+                        };
+                        
+                        var a = ride.date.split('-');
+                        var b = ride.time.substring(0,5).split(':');
+                                                
+                        log(instance, instance.options.name, 'Ride Date/Time: ', d);
+                        log(instance, instance.options.name, 'Ride Date a: ', a);
+                        log(instance, instance.options.name, 'Ride Date b: ', b);
+                        
+                        var sd = new Date(a[0], a[1] - 1, a[2], b[0], b[1]);
+                        var cd = new Date();
+                        
+                        sd.setTime(sd.getTime() - sd.getTimezoneOffset()*60*1000);
+                        
+                        log(instance, instance.options.name, 'Ride Date cd: ', cd);
+                        log(instance, instance.options.name, 'Ride Date sd: ', sd);
+                        
+                        var r = sd > cd;
+                        
+                        log(instance, instance.options.name, 'Ride Joinable? ', r);
+                        
+                        
+                    });
+                    
+                    t = $('<table class="ride-management rides detail" width="100%">');
+                    td1 = $('<td align="left" style="width:100%">').append($('<span class="label-01">').append('Additional Riders'));
+                    if (rideJoinable(instance, ride, riders, user)) {
+                        td2 = $('<td align="right" style="width:100%">').append(jr);
+                    } else {
+                        td2 = $('<td align="right" style="width:100%">').append('&nbsp;');
+                    }
                     row6.append(td1);
+                    row6.append(td2);
                     t.append(row6);
                     div.append(t);
                     
@@ -1136,7 +1196,7 @@
                                                                 
                             }
                         }
-                        td1 = $('<td align="left" style="width:100%">').append(gt);
+                        td1 = $('<td colspan="2" align="left" style="width:100%">').append(gt);
                     }                    
                     
                     row7.append(td1);
@@ -2511,6 +2571,53 @@
         } 
         
         return span;
+        
+    }
+    
+    function rideJoinable(instance, ride, riders, user) {
+        
+        var joinable = false;
+        
+        log(instance, instance.options.name, 'user: ', user);
+        
+        try {
+            
+            var r = $.map(riders, function(value, index){
+                return value.user_id;
+            });
+                
+            log(instance, instance.options.name, 'Riders r: ', r);
+            log(instance, instance.options.name, 'User Id: ', user.id);
+            log(instance, instance.options.name, 'IndexOf r: ', r.indexOf(user.id));
+                        
+            if (ride.join === '1' && r.indexOf(user.id) === -1) {
+                
+                var a = ride.date.split('-');
+                var b = ride.time.substring(0,5).split(':');
+                                
+                log(instance, instance.options.name, 'Ride Date a: ', a);
+                log(instance, instance.options.name, 'Ride Date b: ', b);
+
+                var sd = new Date(a[0], a[1] - 1, a[2], b[0], b[1]);
+                var cd = new Date();
+
+                sd.setTime(sd.getTime() - sd.getTimezoneOffset()*60*1000);
+                cd.setTime(cd.getTime() - cd.getTimezoneOffset()*60*1000);
+
+                log(instance, instance.options.name, 'Ride Date cd: ', cd);
+                log(instance, instance.options.name, 'Ride Date sd: ', sd);
+                                
+                joinable = sd > cd;
+
+                log(instance, instance.options.name, 'Ride Joinable? ', joinable);
+                
+            }                        
+            
+        } catch (e) {
+            
+        }
+        
+        return joinable;
         
     }
         

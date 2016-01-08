@@ -192,28 +192,46 @@ class RidesController extends Zend_Controller_Action {
 
         $mapper = new Application_Model_TableMapper();
         
-        $id = $this->_getParam("id");
-        $query = "select a.*, ";
-        $query .= "(select concat_ws(', ', last_name, first_name) from users where id = a.owner) as 'owner_name', ";
-        $query .= "(select name from groups where id = a.group_id) as 'group_name', ";
-        $query .= "(select name from locations where id = a.location_id) as 'location_name', ";
-        $query .= "(select description from addresses where id = a.address_id) as 'address_description', ";
-        $query .= "(select type from addresses where id = a.address_id) as 'address_type', ";
-        $query .= "(select street from addresses where id = a.address_id) as 'address_street', ";
-        $query .= "(select city from addresses where id = a.address_id) as 'address_city', ";
-        $query .= "(select state from addresses where id = a.address_id) as 'address_state', ";
-        $query .= "(select zip from addresses where id = a.address_id) as 'address_zip', ";
-        $query .= "(select gps_latitude from addresses where id = a.address_id) as 'address_latitude', ";
-        $query .= "(select gps_longitude from addresses where id = a.address_id) as 'address_longitude' ";
-        $query .= "from rides a ";
-        $query .= "where id = $id;";
         
         $process = $this->_getParam("process");
         $oper = $this->_getParam("oper");
         
         switch ($process) {
             case "GET-ONE":
-                // get basic ride info
+                
+                $auth = Zend_Auth::getInstance();
+
+                $user_id = 0;
+
+                if ($auth->hasIdentity()) {
+                    $user_id = $id = $auth->getIdentity()->id;
+                } 
+
+                $mapper = new Application_Model_TableMapper();
+
+
+                // user
+                $query = "select a.* ";
+                $query .= "from users a ";
+                $query .= "where id = $user_id;";        
+                $user = $mapper->getCustomSelect($query);
+                
+                        // get basic ride info
+                $id = $this->_getParam("id");
+                $query = "select a.*, ";
+                $query .= "(select concat_ws(', ', last_name, first_name) from users where id = a.owner) as 'owner_name', ";
+                $query .= "(select name from groups where id = a.group_id) as 'group_name', ";
+                $query .= "(select name from locations where id = a.location_id) as 'location_name', ";
+                $query .= "(select description from addresses where id = a.address_id) as 'address_description', ";
+                $query .= "(select type from addresses where id = a.address_id) as 'address_type', ";
+                $query .= "(select street from addresses where id = a.address_id) as 'address_street', ";
+                $query .= "(select city from addresses where id = a.address_id) as 'address_city', ";
+                $query .= "(select state from addresses where id = a.address_id) as 'address_state', ";
+                $query .= "(select zip from addresses where id = a.address_id) as 'address_zip', ";
+                $query .= "(select gps_latitude from addresses where id = a.address_id) as 'address_latitude', ";
+                $query .= "(select gps_longitude from addresses where id = a.address_id) as 'address_longitude' ";
+                $query .= "from rides a ";
+                $query .= "where id = $id;";                
                 $ride = $mapper->getCustomSelect($query);
                                 
                 // get owner info
@@ -276,6 +294,9 @@ class RidesController extends Zend_Controller_Action {
                 $data["location_resources"] = $location_resources;
                 $data["owner"] = $owner;
                 $data["riders"] = $riders;
+                $data["user_id"] = $user_id;
+                $data["user"] = $user;
+                
                                 
                 break;
             case "POST":
@@ -350,12 +371,55 @@ class RidesController extends Zend_Controller_Action {
                     $i = $mapper->insertItem($table_name, $values);
                     
                     $id = $mapper->getLastInsertId($table_name);
-                    
+                                        
                     if ($i > 0) {
-                                            
-                        $data["success"] = true;
-                        $data["message"] = "Ride added: $id";
-                        $data["code"] = 0;                        
+                        
+                        $failed_riders = array();
+                                                                                               
+                        // add riders 
+                        $query = "select * ";
+                        $query .= "from group_members ";
+                        $query .= "where group_id=$group";
+                        $group_members = $mapper->getCustomSelect($query);
+
+                        foreach($group_members as $member) {
+
+                            $values = array(
+                                "date_created" => $d,
+                                "last_updated" => $d,
+                                "active" => 1,
+                                "ride_id" => $id,
+                                "user_id" => $member["user_id"],
+                                "group_id" => $group,
+                                "rsvp" => 0,
+                                "status" => "ON TIME",
+                                "complete" => 0,
+                                "rating" => 0,
+                                "comment" => null
+                            );
+
+                            $j = $mapper->insertItem("riders", $values);
+
+                            if ($j <= 0) {
+                                array_push($failed_riders, $member["user_id"]);
+                            }
+                        }
+                        
+                        if (count($failed_riders) > 0) {
+                            
+                            $error = array();
+                            $error["code"] = "105";
+                            $error["message"] = "Failed to add riders: " . join($failed_riders, ",");
+                            $data["success"] = false;
+                            $data["message"] = "Some riders failed to be added to the ride: $id";
+                            $data["code"] = 105;
+                            $data["error"] = $error;
+                                                        
+                        } else {
+                            $data["success"] = true;
+                            $data["message"] = "Ride added: $id";
+                            $data["code"] = 0;                                                    
+                        }
                         
                     } else {
                         

@@ -51,7 +51,7 @@
                     cache: false,
                     callback: function(data) {
                         
-                        if (data.success) {
+                        if (data.success) {                            
                             location.replace('rides');
                         } else {
                             $('#login-error-message').text("[" + data.code + "] " + data.message);

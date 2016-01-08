@@ -162,7 +162,7 @@ div.ui-datepicker {font-size: 11px;}
 .ride-add-button span.red {color: red !important; font-size:11px !important; margin-left: 3px;}
 
 .subride-button-action {font-size: 10px !important; width: 125px; margin: 3px;}
-.subride-ranking-star {font-size: 30px; color: #999; margin: 5px;}
+.subride-ranking-star {font-size: 30px; color: #999; margin-left: 2px; border: 0px solid #333;}
 .subride-ranking-star:hover {cursor: pointer; cursor: hand;}
 
 .user-edit-ad {}

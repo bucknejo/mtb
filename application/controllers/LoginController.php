@@ -90,7 +90,8 @@ class LoginController extends Zend_Controller_Action
 
                         $data["success"] = true; 
                         $data["message"] = "Registration success";
-                        $data["code"] = 0;                 
+                        $data["code"] = 0;
+                        $data["user"] = $users[0];
 
                     } else {
 
@@ -153,10 +154,11 @@ class LoginController extends Zend_Controller_Action
                     if ($this->getRequest()->isPost()) {
 
                         if ($this->_process($table_name, $values)) {
-
+                                                        
                             $data["success"] = true; 
                             $data["message"] = "Authentication success";
-                            $data["code"] = 0;                 
+                            $data["code"] = 0;   
+                            $data["user"] = $user;
 
                         } else {
 
