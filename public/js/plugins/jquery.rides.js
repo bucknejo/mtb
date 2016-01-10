@@ -1,5 +1,7 @@
 ;(function($) {
     
+    var x = "";
+    
     var defaults = {
         debug: true,
         exception: {
