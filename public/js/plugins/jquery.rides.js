@@ -1106,30 +1106,34 @@
                     }).click(function(e) {
                         e.preventDefault();
                         
-                        var d = {
-                            date: ride.date,
-                            time: ride.time
+                        var post = $.extend(ride, {token: instance.options.token});
+
+                        var request = {
+                            callback: function(data, instance) {
+
+                                var config = {
+                                    success: data.success,
+                                    code: (!data.error) ? data.code : data.error.code,
+                                    message: (!data.error) ? data.message : data.error.message,
+                                    callback: function() {
+                                        build(instance);
+                                    },
+                                    height: (data.success) ? 150 : 700,
+                                    modal: true,
+                                    title: 'Add Rider'
+                                };
+
+                                display(instance, config);
+
+                            },
+                            data: post,
+                            url: Models.riders().urls.post,
+                            type: 'post'                        
                         };
                         
-                        var a = ride.date.split('-');
-                        var b = ride.time.substring(0,5).split(':');
-                                                
-                        log(instance, instance.options.name, 'Ride Date/Time: ', d);
-                        log(instance, instance.options.name, 'Ride Date a: ', a);
-                        log(instance, instance.options.name, 'Ride Date b: ', b);
+                        log(instance, instance.options.name, 'Join Ride: ', post);
                         
-                        var sd = new Date(a[0], a[1] - 1, a[2], b[0], b[1]);
-                        var cd = new Date();
-                        
-                        sd.setTime(sd.getTime() - sd.getTimezoneOffset()*60*1000);
-                        
-                        log(instance, instance.options.name, 'Ride Date cd: ', cd);
-                        log(instance, instance.options.name, 'Ride Date sd: ', sd);
-                        
-                        var r = sd > cd;
-                        
-                        log(instance, instance.options.name, 'Ride Joinable? ', r);
-                        
+                        server(request, instance);
                         
                     });
                     

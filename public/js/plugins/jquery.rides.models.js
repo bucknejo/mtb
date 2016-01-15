@@ -171,6 +171,14 @@ var Models = function(){
         }
     };
     
+    var riders = {
+        name: 'locations',
+        urls: {
+            get: 'riders/get',
+            post: 'riders/post'
+        }                
+    };
+    
     var locations = {
         name: 'locations',
         urls: {
@@ -227,13 +235,18 @@ var Models = function(){
         return photos;
     }
     
+    function getRiders() {
+        return riders;
+    }
+    
     return {
         users: getUsers,
         rides: getRides,
         locations: getLocations,
         addresses: getAddresses,
         groups: getGroups,
-        photos: getPhotos
+        photos: getPhotos,
+        riders: getRiders
     };
     
 }();
