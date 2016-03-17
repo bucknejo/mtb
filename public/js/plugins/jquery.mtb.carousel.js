@@ -134,12 +134,13 @@
                     }
                     
                     m.append(ul);
+                                        
                 }
                 
                 carousel.append(l);
                 carousel.append(m);
                 carousel.append(r);
-                
+
                 $('#'+instance.id+'-carousel-ul li:first').before('#'+instance.id+'-carousel-ul li:last');
 
                 r.click(function(){
@@ -160,6 +161,13 @@
                     });
                 });
                 
+                if (isArray(data.photos) && data.photos.length === 0) {                
+                    
+                    l.hide();
+                    r.hide();
+                    
+                }
+                                
             }
         };
         
